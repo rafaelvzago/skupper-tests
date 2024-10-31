@@ -1,0 +1,7 @@
+[k8s_clusters]
+ocp415
+ocp417
+
+[k8s_clusters:vars]
+ansible_user=rzago
+ansible_connection=local

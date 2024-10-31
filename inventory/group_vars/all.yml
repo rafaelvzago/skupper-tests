@@ -1,0 +1,3 @@
+kubeconfigs:
+  ocp415: "/home/rzago/.kube/ocp415"
+  ocp417: "/home/rzago/.kube/ocp417"

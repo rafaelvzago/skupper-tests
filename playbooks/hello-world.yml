@@ -1,0 +1,26 @@
+---
+- name: Run namespace creation and save results
+  hosts: k8s_clusters
+  gather_facts: no
+  vars:
+    run_id: "{{ 100000 | random }}"
+
+  roles:
+    - namespace-create
+
+  tasks:
+    - name: Ensure test_runs directory exists
+      file:
+        path: "{{ playbook_dir }}/test_runs"
+        state: directory
+      delegate_to: localhost
+      run_once: true
+
+    - name: Gather namespace data across all hosts and save to file
+      delegate_to: localhost
+      run_once: true
+      vars:
+        namespaces_data: "{{ groups['k8s_clusters'] | map('extract', hostvars, 'host_namespace_data') | select('defined') | list }}"
+      copy:
+        dest: "{{ playbook_dir }}/test_runs/namespace_run_{{ run_id }}.yaml"
+        content: "{{ { 'run_id': run_id, 'namespaces': namespaces_data } | to_nice_yaml }}"
