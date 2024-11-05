@@ -1,6 +1,5 @@
 [k8s_clusters]
-ocp415
-ocp417
+hello-world
 
 [k8s_clusters:vars]
 ansible_user=rzago

@@ -1,3 +1,8 @@
 kubeconfigs:
-  ocp415: "/home/rzago/.kube/ocp415"
-  ocp417: "/home/rzago/.kube/ocp417"
+  hello-world: "/home/rzago/.kube/ocp-minikube"
+
+# Hello World Example Variables
+images:
+  frontend: "quay.io/skupper/hello-world-frontend"
+  backend: "quay.io/skupper/hello-world-backend"
+  skupper-backend-connectior: "https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/example/connector.yaml"

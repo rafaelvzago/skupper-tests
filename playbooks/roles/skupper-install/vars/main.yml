@@ -1,0 +1,4 @@
+---
+skupper_repository: 'https://github.com/skupperproject/skupper.git'
+skupper_branch: 'v2'
+skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
