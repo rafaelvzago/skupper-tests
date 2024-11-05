@@ -4,26 +4,34 @@
   roles:
     - roles/skupper-install
 
-- name: Creating two namespaces with the name hello-world-random-west and hello-world-random number-east
-  hosts: hello-world
   tasks:
-    - name: Create namespace hello-world-<random number>west
+    - name: Generate a lowercase prefix
+      set_fact:
+        prefix: "{{ lookup('password', '/dev/null chars=ascii_lowercase length=3') }}"
+
+    - name: Debug the prefix
+      debug:
+        msg: "Prefix: {{ prefix }}"
+
+    - name: Create namespace hello-world-west
       k8s:
         state: present
         definition:
           apiVersion: v1
           kind: Namespace
           metadata:
-            name: hello-world-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=5') }}-west
+            # Lets use the prefix-hello-world-west
+            name: "{{ prefix }}-hello-world-west"
       register: west_ns
-    - name: Create namespace hello-world-<random number>east
+
+    - name: Create namespace hello-world-east
       k8s:
         state: present
         definition:
           apiVersion: v1
           kind: Namespace
           metadata:
-            name: hello-world-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=5') }}-east
+            name: "{{ prefix }}-hello-world-east"
       register: east_ns
 
     - name: Print the namespace names
