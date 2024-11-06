@@ -93,7 +93,7 @@
 
     - name: Run curl command in Kubernetes with retries
       shell: |
-        kubectl run curl --image=quay.io/rzago/curl-telnet -n {{ west_ns }} \
+        kubectl run curl --image={{ images['curl-image'] }} -n {{ west_ns }} \
         --restart=Never --rm -i --tty -- curl backend:8080/api/hello
       register: curl_command
       retries: 5
