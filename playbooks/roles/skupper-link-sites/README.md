@@ -1,38 +1,88 @@
-Role Name
-=========
+# Skupper Link Sites Role
 
-A brief description of the role goes here.
+The `skupper-link-sites` role enables cross-namespace or cross-cluster communication between Skupper sites by creating and applying `AccessGrant` and `AccessToken` resources. This role sets up secure connections between namespaces, facilitating service connectivity across clusters in a Skupper environment.
 
-Requirements
-------------
+## Role Structure
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+```plaintext
+skupper-link-sites
+├── defaults
+│   └── main.yml               # Default variables for site linking
+├── files
+│   └── access-grant.yml       # Template for AccessGrant resource
+├── handlers
+│   └── main.yml               # Handlers (if needed)
+├── meta
+│   └── main.yml               # Role metadata
+├── tasks
+│   └── main.yml               # Main tasks for linking Skupper sites
+├── templates
+│   └── access_token.yaml.j2   # Template for AccessToken resource
+└── vars
+    └── main.yml               # Variables specific to site linking
+```
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The following variables can be configured in the playbook or in a group/host variable file:
 
-Dependencies
-------------
+- `source_namespace`: Namespace where the AccessGrant is created.
+- `target_namespace`: Namespace where the AccessToken is applied.
+- `access_grant_name`: Name for the AccessGrant resource.
+- `access_token_name`: Name for the AccessToken resource.
+- `access_token_template`: Path to the AccessToken YAML template, typically `templates/access_token.yaml.j2`.
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Tasks Overview
 
-Example Playbook
-----------------
+### 1. Ensuring `kubectl` Availability
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Checks if `kubectl` is installed and available on the system, failing if not found.
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+### 2. Applying AccessGrant in the Source Namespace
 
-License
--------
+Creates the `AccessGrant` resource in the specified `source_namespace` using the `access-grant.yml` file.
 
-BSD
+### 3. Waiting for AccessGrant to be Ready
 
-Author Information
-------------------
+Waits until the `AccessGrant` resource is ready, allowing it to generate the required connection details.
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+### 4. Retrieving AccessGrant Details
+
+Fetches the status of the `AccessGrant` to extract information needed for creating the `AccessToken`, such as the CA, code, and URL.
+
+### 5. Generating the AccessToken YAML
+
+Uses the `access_token.yaml.j2` template to create the `AccessToken` YAML, populated with values from the `AccessGrant` status.
+
+### 6. Applying AccessToken in the Target Namespace
+
+Applies the generated `AccessToken` YAML in the specified `target_namespace`, linking it to the source.
+
+### 7. Cleaning Up Temporary Files
+
+Deletes the temporary `AccessToken` YAML file from the system after use.
+
+## Example Usage
+
+To use this role in a playbook, include it as follows:
+
+```yaml
+- name: Link Skupper sites between namespaces
+  hosts: all
+  roles:
+    - role: skupper-link-sites
+      vars:
+        source_namespace: "namespace-a"
+        target_namespace: "namespace-b"
+        access_grant_name: "my-grant"
+        access_token_name: "my-access-token"
+        access_token_template: "templates/access_token.yaml.j2"
+```
+
+## Debugging and Verification
+
+The role provides detailed debug messages for the status of the `AccessGrant` and the variables used to generate the `AccessToken`, aiding in troubleshooting.
+
+## License
+
+This project is licensed under the terms in `LICENSE.txt`.

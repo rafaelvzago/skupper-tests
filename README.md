@@ -1,219 +1,90 @@
-# Skupper Tests Ansible Project
+# Skupper Ansible Automation Project
 
-This project, **skupper-tests**, is an Ansible automation setup designed to create namespaces across multiple Kubernetes clusters. It utilizes Ansible playbooks and roles to manage Kubernetes resources using the `kubernetes.core` collection.
+This project uses Ansible to automate the setup of Skupper sites and the interconnection of services across namespaces. The playbooks and roles in this repository deploy a frontend and backend application across two Kubernetes namespaces, linking them via Skupper for cross-cluster communication.
 
 ## Project Structure
 
+```plaintext
+.
+├── ansible.cfg               # Configuration file for Ansible
+├── inventory
+│   ├── group_vars
+│   │   └── all.yml           # Variables applicable to all groups
+│   └── hosts                 # Inventory file defining hosts
+├── LICENSE.txt               # License information
+├── playbooks
+│   ├── files                 # YAML files with configurations for deployments
+│   │   ├── backend-connector.yml
+│   │   ├── east-site.yml
+│   │   ├── frontend-listener.yml
+│   │   └── west-site.yml
+│   ├── hello-world.yml       # Main playbook for Skupper deployment
+│   ├── roles                 # Roles for modularized tasks
+│   │   ├── skupper-install   # Role for Skupper installation
+│   │   └── skupper-link-sites # Role for linking Skupper sites
+├── README.md                 # Project documentation
+└── requirements.txt          # Dependencies for Ansible roles
 ```
-skupper-tests/
-├── ansible.cfg               # Ansible configuration file
-├── inventory/
-│   ├── hosts                 # Inventory file listing clusters
-│   └── group_vars/
-│       └── all.yml           # Group variables (kubeconfig paths)
-├── playbooks/
-│   ├── hello-world.yml       # Main playbook to run namespace creation
-│   └── test.yml              # Playbook to test connectivity to clusters
-├── roles/
-│   └── namespace-create/
-│       └── tasks/
-│           └── main.yml      # Role tasks for namespace creation
-├── README.md                 # Project documentation (this file)
-└── requirements.txt          # Python package requirements
-```
 
-## Prerequisites
+## Playbooks
 
-- **Ansible**: Installed on your local machine.
-- **Python Packages**: Install required Python packages using the provided `requirements.txt`.
-  ```bash
-  pip install -r requirements.txt
-  ```
-- **Kubernetes Collection**: Install the `kubernetes.core` Ansible collection.
-  ```bash
-  ansible-galaxy collection install kubernetes.core
-  ```
-- **Kubeconfig Files**: Access to Kubernetes clusters with valid kubeconfig files.
+### `hello-world.yml`
 
-## Setup
+This is the primary playbook that:
+1. Installs Skupper.
+2. Creates unique namespaces (e.g., `hello-world-west` and `hello-world-east`).
+3. Deploys a frontend service in the west namespace and a backend service in the east namespace.
+4. Applies Skupper configurations to both namespaces to enable cross-namespace communication.
+5. Links the two Skupper sites using a custom role `skupper-link-sites`.
+6. Exposes the frontend service to the outside world.
+7. Validates the connectivity by curling the backend from the frontend namespace.
 
-### 1. Clone the Repository
+### Example Workflow
 
-Clone the `skupper-tests` project to your local machine:
+1. **Namespace Creation**: Creates randomized namespaces for isolating environments.
+2. **Service Deployment**: Deploys the frontend and backend services into the respective namespaces.
+3. **Skupper Configuration**: Applies Skupper configurations to enable communication between the namespaces.
+4. **Connectivity Verification**: Runs a test to ensure backend service is accessible from the frontend.
+5. **Tear Down**: Deletes namespaces and related resources post-run.
+
+### Key Variables
+
+- `images.frontend`: Docker image for the frontend application.
+- `images.backend`: Docker image for the backend application.
+- `source_namespace` and `target_namespace`: Variables used to specify namespaces in the Skupper link setup.
+
+### Roles
+
+#### `skupper-install`
+Handles Skupper installation tasks, including configuration file management and necessary pre-requisites for Skupper.
+
+#### `skupper-link-sites`
+Links two Skupper sites by generating and using an access token, allowing cross-namespace communication.
+
+## Dependencies
+
+Install required roles listed in `requirements.txt` by running:
 
 ```bash
-git clone https://github.com/yourusername/skupper-tests.git
-cd skupper-tests
+ansible-galaxy install -r requirements.txt
 ```
-
-### 2. Configure Inventory
-
-Edit the `inventory/hosts` file to list your Kubernetes clusters:
-
-```ini
-[k8s_clusters]
-ocp416
-ocp417
-
-[k8s_clusters:vars]
-ansible_user=your_username
-ansible_connection=local
-```
-
-### 3. Configure Group Variables
-
-Edit `inventory/group_vars/all.yml` to specify the paths to your kubeconfig files:
-
-```yaml
-kubeconfigs:
-  ocp416: "/home/your_username/.kube/ocp416"
-  ocp417: "/home/your_username/.kube/ocp417"
-```
-
-Ensure that the cluster names (`ocp416`, `ocp417`) match those in your `hosts` file.
-
-### 4. Ansible Configuration
-
-Ensure `ansible.cfg` is present with the following content:
-
-```ini
-[defaults]
-roles_path = ./roles
-```
-
-This tells Ansible where to find your roles.
 
 ## Usage
 
-### 1. Test Connectivity to Clusters
+1. **Setup Inventory**: Define the hosts and group variables in the `inventory` folder.
+2. **Run the Playbook**:
 
-Before running the main playbook, you can test connectivity to your clusters:
+    ```bash
+    ansible-playbook -i inventory/hosts playbooks/hello-world.yml
+    ```
 
-```bash
-ansible-playbook -i inventory/hosts playbooks/test.yml
-```
+This playbook will set up namespaces, deploy services, and link them through Skupper.
 
-This playbook uses the `kubernetes.core.k8s_cluster_info` module to validate connections.
+## Cleanup
 
-### 2. Create Namespaces
-
-Run the `hello-world.yml` playbook to create namespaces on all clusters:
-
-```bash
-ansible-playbook -i inventory/hosts playbooks/hello-world.yml
-```
-
-This playbook will:
-
-- Generate a unique namespace name for each cluster.
-- Create the namespace using the `namespace-create` role.
-- Save the namespace details and run ID to a YAML file in `playbooks/test_runs/`.
-
-### 3. Verify Namespaces
-
-Check that the namespaces have been created:
-
-```bash
-kubectl --kubeconfig=/home/your_username/.kube/ocp416 get namespaces
-kubectl --kubeconfig=/home/your_username/.kube/ocp417 get namespaces
-```
-
-### 4. Review Run Details
-
-The playbook saves run details in `playbooks/test_runs/namespace_run_<run_id>.yaml`.
-
-Example content:
-
-```yaml
-run_id: '12345'
-namespaces:
-  - cluster: ocp416
-    namespace: test-678-ocp416
-  - cluster: ocp417
-    namespace: test-910-ocp417
-```
-
-## Project Details
-
-### Playbooks
-
-- **playbooks/test.yml**: Tests connectivity to all clusters using the `kubernetes.core.k8s_cluster_info` module.
-- **playbooks/hello-world.yml**: Executes the `namespace-create` role to create namespaces and saves run details.
-
-### Role: namespace-create
-
-Located in `roles/namespace-create/`, this role:
-
-- Generates a random namespace name per cluster.
-- Creates the namespace on each cluster.
-- Collects namespace details for reporting.
-
-#### Key Tasks in `roles/namespace-create/tasks/main.yml`:
-
-1. **Generate Namespace Name**:
-   ```yaml
-   - name: Generate random suffix for each cluster's namespace
-     vars:
-       suffix: "{{ 1000 | random | string | regex_replace('^[^a-z0-9]*([a-z0-9]+)', '\\1') }}"
-     set_fact:
-       namespace_name: "test-{{ suffix }}-{{ inventory_hostname | lower }}"
-   ```
-
-2. **Create Namespace**:
-   ```yaml
-   - name: Create namespace for each cluster
-     kubernetes.core.k8s:
-       kubeconfig: "{{ kubeconfigs[inventory_hostname] }}"
-       api_version: v1
-       kind: Namespace
-       state: present
-       name: "{{ namespace_name }}"
-     register: namespace_creation
-   ```
-
-3. **Collect Namespace Data**:
-   ```yaml
-   - name: Collect namespace details in host-specific variable
-     set_fact:
-       host_namespace_data:
-         cluster: "{{ inventory_hostname }}"
-         namespace: "{{ namespace_name }}"
-   ```
-
-### Variables
-
-- **kubeconfigs**: A dictionary mapping cluster names to kubeconfig paths, defined in `inventory/group_vars/all.yml`.
-- **run_id**: A unique identifier for each playbook run, generated at runtime.
-
-## Troubleshooting
-
-- **Undefined Variable Error**: Ensure variables are defined before use. Check task ordering in playbooks and roles.
-- **Connection Issues**: Verify kubeconfig paths and permissions. Test connectivity manually using `kubectl`.
-- **Python Interpreter Warnings**: Suppress warnings by adding `interpreter_python = auto_silent` to `ansible.cfg`.
-
-  ```ini
-  [defaults]
-  interpreter_python = auto_silent
-  ```
-
-## Additional Tips
-
-- **Consistency**: Ensure hostnames in `inventory/hosts` match keys in `kubeconfigs`.
-- **Permissions**: Kubeconfig files should be readable by the user running Ansible.
-- **Debugging**: Use `-vvv` with `ansible-playbook` for verbose output.
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
+To clean up resources, use the final teardown task in the `hello-world.yml` playbook, which deletes the created namespaces.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the terms in `LICENSE.txt`.
 
-## Contact
-
-For questions or feedback, please open an issue in the repository.
-
----
-
-**Note**: Replace `/home/your_username/.kube/ocp416` with the actual paths to your kubeconfig files.

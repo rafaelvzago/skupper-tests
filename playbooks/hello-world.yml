@@ -103,3 +103,7 @@
     - name: Debug the curl command
       debug:
         msg: "{{ curl_command.stdout_lines }}"
+
+    - name: Tear down the environment
+      command: kubectl delete namespace {{ west_ns }} {{ east_ns }}
+      ignore_errors: true
