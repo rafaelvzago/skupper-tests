@@ -5,7 +5,7 @@
       - "skupper_repository: {{ skupper_repository }}"
       - "skupper_branch: {{ skupper_branch }}"
       - "skupper_controller_manifest: {{ skupper_controller_manifest }}"
-    
+
 - name: Create a temporary directory for the Skupper repository
   tempfile:
     state: directory
@@ -26,15 +26,22 @@
   register: crd_files
 
 - name: Install Skupper CRDs
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfigs[inventory_hostname] }}"
-    src: "{{ item.path }}"
+  command: kubectl apply -f "{{ item.path }}"
   loop: "{{ crd_files.files }}"
   register: skupper_crd_results
+  no_log: true  # Suppresses detailed output for the command execution
+
+- name: Set applied_files variable
+  set_fact:
+    applied_files: "{{ skupper_crd_results.results | selectattr('changed', 'equalto', true) | map(attribute='item.path') | list }}"
+
+- name: Print applied files
+  debug:
+    msg: "Applied file: {{ item }}"
+  loop: "{{ applied_files }}"
+  when: applied_files | length > 0
+
 
 - name: Install the Skupper Controller
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfigs[inventory_hostname] }}"
-    src: "{{ skupper_controller_manifest }}"
-    state: present
+  command: kubectl apply -f "{{ skupper_controller_manifest }}"
   register: skupper_controller_results

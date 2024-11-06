@@ -14,195 +14,92 @@
         msg: "Prefix: {{ prefix }}"
 
     - name: Create namespace hello-world-west
-      k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            # Lets use the prefix-hello-world-west
-            name: "{{ prefix }}-hello-world-west"
+      command: kubectl create namespace {{ prefix }}-hello-world-west
       register: west_ns
 
     - name: Create namespace hello-world-east
-      k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: "{{ prefix }}-hello-world-east"
+      command: kubectl create namespace {{ prefix }}-hello-world-east
       register: east_ns
+
+    - name: Extracting only the namespace name
+      set_fact:
+        west_ns: "{{ west_ns.stdout.split('/')[1].split()[0] }}"
+        east_ns: "{{ east_ns.stdout.split('/')[1].split()[0] }}"
 
     - name: Print the namespace names
       debug:
-        msg: "West namespace: {{ west_ns.result.metadata.name }} East namespace: {{ east_ns.result.metadata.name }}"
+        msg: "West: {{ west_ns }} - East: {{ east_ns }}"
 
-    - name: Deploying Frontend into the west namespaces
-      k8s:
-        state: present
-        definition:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: frontend
-            namespace: "{{ west_ns.result.metadata.name }}"
-          spec:
-            replicas: 1
-            selector:
-              matchLabels:
-                app: frontend
-            template:
-              metadata:
-                labels:
-                  app: frontend
-              spec:
-                containers:
-                  - name: frontend
-                    image: "{{ images.frontend }}"
+    - name: Deploying Frontend into the west namespace
+      command: kubectl create deployment frontend --image={{ images.frontend }} -n {{ west_ns }}
 
-    - name: Deploying Backend into the west namespaces
-      k8s:
-        state: present
-        definition:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: backend
-            namespace: "{{ east_ns.result.metadata.name }}"
-          spec:
-            replicas: 1
-            selector:
-              matchLabels:
-                app: backend
-            template:
-              metadata:
-                labels:
-                  app: backend
-              spec:
-                containers:
-                  - name: backend
-                    image: "{{ images.backend }}"
+    - name: Deploying Backend into the west namespace
+      command: kubectl create deployment backend --image={{ images.backend }} -n {{ east_ns }}
 
     - name: Apply Skupper West Site YAML
       k8s:
         state: present
         src: files/west-site.yml
-        namespace: "{{ west_ns.result.metadata.name }}"
+        namespace: "{{ west_ns }}"
 
     - name: Apply Skupper East Site YAML
       k8s:
         state: present
         src: files/east-site.yml
-        namespace: "{{ east_ns.result.metadata.name }}"
+        namespace: "{{ east_ns }}"
 
     - name: Waiting to all pods to be ready on West
       k8s_info:
         kind: Pod
-        namespace: "{{ west_ns.result.metadata.name }}"
+        namespace: "{{ west_ns }}"
       register: west_pods
       until: west_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == 1
-      retries: 10
+      retries: 30
       delay: 10
 
     - name: Waiting to all pods to be ready on East
       k8s_info:
         kind: Pod
-        namespace: "{{ east_ns.result.metadata.name }}"
+        namespace: "{{ east_ns }}"
       register: east_pods
       until: east_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == 1
-      retries: 10
+      retries: 30
       delay: 10
 
     - name: Exposing Backend in the east namespace
       k8s:
         state: present
         src: files/backend-connector.yml
-        namespace: "{{ east_ns.result.metadata.name }}"
+        namespace: "{{ east_ns }}"
 
     - name: Consuming Backend in the west namespace
       k8s:
         state: present
         src: files/frontend-listener.yml
-        namespace: "{{ west_ns.result.metadata.name }}"
+        namespace: "{{ west_ns }}"
 
     - name: Calling role to link the two sites
       include_role:
         name: skupper-link-sites
       vars:
-        source_namespace: "{{ west_ns.result.metadata.name }}"
-        target_namespace: "{{ east_ns.result.metadata.name }}"
+        source_namespace: "{{ west_ns }}"
+        target_namespace: "{{ east_ns }}"
         access_grant_name: my-grant
         access_token_name: my-access-token
 
-    - name: Start port-forward for frontend deployment asynchronously
+    - name: Creating the Frontend Service
+      command: kubectl expose deployment frontend --port=8080 --target-port=8080 --type=LoadBalancer -n {{ west_ns }}
+      register: frontend_service
+
+    - name: Run curl command in Kubernetes with retries
       shell: |
-        nohup kubectl -n {{ west_ns.result.metadata.name }} port-forward deployment/frontend 8080:8080 > /dev/null 2>&1 &
-      args:
-        executable: /bin/bash
-      async: 0
-      poll: 0
-      register: port_forward_job
-
-    - name: Wait for port-forward to establish
-      wait_for:
-        host: localhost
-        port: 8080
-        state: started
-        timeout: 30
-      delegate_to: localhost
-
-    - name: Confirm port-forward is running
-      shell: |
-        pgrep -f "kubectl -n {{ west_ns.result.metadata.name }} port-forward deployment/frontend 8080:8080"
-      register: pgrep_output
-      failed_when: pgrep_output.stdout == ""
-      changed_when: false
-      delegate_to: localhost
-
-    - name: Display Port Forwarding Status
-      debug:
-        msg: "Port forwarding for frontend deployment in namespace '{{ west_ns.result.metadata.name }}' is active."
-
-    - name: Check frontend health endpoint
-      uri:
-        url: http://localhost:8080/api/health
-        method: GET
-        return_content: true
-        status_code: 200
-      register: health_response
-      delegate_to: localhost
+        kubectl run curl --image=quay.io/rzago/curl-telnet -n {{ west_ns }} \
+        --restart=Never --rm -i --tty -- curl backend:8080/api/hello
+      register: curl_command
       retries: 5
-      delay: 5
-      until: health_response.status == 200
+      delay: 10
+      until: curl_command.rc == 0
 
-    - name: Validate frontend health status
-      assert:
-        that:
-          - health_response.status == 200
-          - health_response.content | trim == "OK"  # Exact match after trimming whitespace
-        fail_msg: "Frontend health check failed. Expected status 200 and 'OK' in response."
-        success_msg: "Frontend is healthy and responding correctly."
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    - name: Debug the curl command
+      debug:
+        msg: "{{ curl_command.stdout_lines }}"

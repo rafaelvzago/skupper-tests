@@ -6,3 +6,4 @@ images:
   frontend: "quay.io/skupper/hello-world-frontend"
   backend: "quay.io/skupper/hello-world-backend"
   skupper-backend-connectior: "https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/example/connector.yaml"
+  curl-image: "quay.io/rzago/curl-telnet"
