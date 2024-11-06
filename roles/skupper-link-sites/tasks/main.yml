@@ -1,0 +1,74 @@
+# roles/link_sites/tasks/main.yml
+---
+- name: Ensure kubectl is installed
+  ansible.builtin.command:
+    cmd: kubectl version --client
+  register: kubectl_check
+  failed_when: kubectl_check.rc != 0
+  changed_when: false
+
+- name: Apply AccessGrant in source namespace
+  kubernetes.core.k8s:
+    namespace: "{{ source_namespace }}"
+    state: present
+    src: "{{ role_path }}/files/access-grant.yml"
+  register: apply_access_grant
+
+- name: Wait for AccessGrant to be ready
+  ansible.builtin.command:
+    cmd: kubectl wait --for=condition=ready accessgrant/my-grant -n {{ source_namespace }}
+  register: wait_result
+  ignore_errors: true
+
+- name: Get AccessGrant info
+  ansible.builtin.command:
+    cmd: kubectl get accessgrant my-grant -n {{ source_namespace }} -o yaml
+  register: get_accessgrant
+  when: wait_result is not failed
+
+- name: Verify AccessGrant status
+  ansible.builtin.assert:
+    that:
+      - '"status: Ready" in get_accessgrant.stdout'
+    fail_msg: "The status of 'my-grant' is not Ready"
+    success_msg: "The status of 'my-grant' is Ready"
+  when: wait_result is not failed
+
+- name: Display AccessGrant status
+  debug:
+    msg:
+      - "AccessGrant '{{ access_grant_name }}' status:"
+      - "  Name: {{ get_accessgrant.stdout | from_yaml | json_query('metadata.name') }}"
+      - "  Status: {{ get_accessgrant.stdout | from_yaml | json_query('status.status') }}"
+      - "  Message: {{ get_accessgrant.stdout | from_yaml | json_query('status.message') }}"
+      - "  CA: {{ get_accessgrant.stdout | from_yaml | json_query('status.ca') }}"
+      - "  Code: {{ get_accessgrant.stdout | from_yaml | json_query('status.code') }}"
+      - "  URL: {{ get_accessgrant.stdout | from_yaml | json_query('status.url') }}"
+
+- name: Set facts from AccessGrant status
+  set_fact:
+    ca: "{{ get_accessgrant.stdout | from_yaml | json_query('status.ca') }}"
+    code: "{{ get_accessgrant.stdout | from_yaml | json_query('status.code') }}"
+    url: "{{ get_accessgrant.stdout | from_yaml | json_query('status.url') }}"
+
+- name: Generate AccessToken YAML
+  template:
+    src: "{{ access_token_template }}"
+    dest: "/tmp/{{ access_token_name }}.yaml"
+  vars:
+    ca: "{{ ca }}"
+    code: "{{ code }}"
+    url: "{{ url }}"
+    access_token_name: "{{ access_token_name }}"
+
+- name: Apply AccessToken in target namespace
+  ansible.builtin.command:
+    cmd: kubectl apply -f "/tmp/{{ access_token_name }}.yaml" -n {{ target_namespace }}
+  register: apply_accesstoken
+  failed_when: apply_accesstoken.rc != 0
+
+- name: Clean up temporary AccessToken YAML
+  ansible.builtin.file:
+    path: "/tmp/{{ access_token_name }}.yaml"
+    state: absent
+  when: ansible_os_family != "Windows"

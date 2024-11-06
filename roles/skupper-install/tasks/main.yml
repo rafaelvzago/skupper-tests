@@ -1,0 +1,47 @@
+---
+- name: Printing all the role variables
+  debug:
+    msg:
+      - "skupper_repository: {{ skupper_repository }}"
+      - "skupper_branch: {{ skupper_branch }}"
+      - "skupper_controller_manifest: {{ skupper_controller_manifest }}"
+
+- name: Create a temporary directory for the Skupper repository
+  tempfile:
+    state: directory
+    suffix: skupper_repo
+  register: temp_repo_dir
+
+- name: Clone the Skupper repository
+  git:
+    repo: "{{ skupper_repository }}"
+    dest: "{{ temp_repo_dir.path }}"
+    version: "{{ skupper_branch }}"
+    depth: 1
+
+- name: Find Skupper CRD files
+  find:
+    paths: "{{ temp_repo_dir.path }}/api/types/crds"
+    patterns: "*.yaml"
+  register: crd_files
+
+- name: Install Skupper CRDs
+  command: kubectl apply -f "{{ item.path }}"
+  loop: "{{ crd_files.files }}"
+  register: skupper_crd_results
+  no_log: true  # Suppresses detailed output for the command execution
+
+- name: Set applied_files variable
+  set_fact:
+    applied_files: "{{ skupper_crd_results.results | selectattr('changed', 'equalto', true) | map(attribute='item.path') | list }}"
+
+- name: Print applied files
+  debug:
+    msg: "Applied file: {{ item }}"
+  loop: "{{ applied_files }}"
+  when: applied_files | length > 0
+
+
+- name: Install the Skupper Controller
+  command: kubectl apply -f "{{ skupper_controller_manifest }}"
+  register: skupper_controller_results

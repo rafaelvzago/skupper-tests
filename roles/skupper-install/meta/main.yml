@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Rafael Zago
+  description: Installs and configures Skupper by cloning the repository, applying CRDs, and deploying the Skupper controller.
+  company: Red Hat
+  license: Apache-2.0
+  min_ansible_version: 2.1
+  galaxy_tags:
+    - skupper
+    - kubernetes
+    - crd
+    - cloud
+    - devops
+    - openshift
+    - network
+    - automation
+
+dependencies: []
+

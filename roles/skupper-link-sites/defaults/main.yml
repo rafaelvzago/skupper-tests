@@ -1,0 +1,7 @@
+---
+source_namespace: west
+target_namespace: east
+access_grant_name: my-grant
+access_token_name: my-access-token
+access_grant_url: "https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/example/access_grant.yaml"
+access_token_template: "access_token.yaml.j2"
