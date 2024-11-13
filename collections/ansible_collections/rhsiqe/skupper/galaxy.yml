@@ -1,3 +1,8 @@
 namespace: rhsiqe
 name: skupper
-version: 2.0.0
+version: 1.0.0
+readme: README.md
+authors:
+  - Rafael Zago <rafaelvzago@gmail.com>
+description: This is a collection to test the skupper V2.
+repository: https://github.com/rafaelvzago/skupper-tests.git

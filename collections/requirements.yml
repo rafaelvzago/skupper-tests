@@ -12,9 +12,6 @@ collections:
   - name: kubernetes.core
     version: 3.2.0
 
-  - name: https://github.com/redhat-cop/network.backup
-    type: git
-
   - name: containers.podman
     version: 1.16.2
 
