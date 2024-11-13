@@ -4,34 +4,8 @@
     var: hostvars[inventory_hostname]
   when: env_shakeout_debug | bool
 
-- name: Check the connection to all clusters
-  tags:
-    - always
-  block:
-    - name: Check the connection to the all clusters
-      kubernetes.core.k8s_info:
-        kubeconfig: "{{ kubeconfigs.east }}"
-        kind: Node
-      register: east
-      ignore_errors: true
-
-    - name: Iterate over each kubeconfig and check the connection
-      ansible.builtin.include_tasks: check_connection.yml
-      loop: "{{ kubeconfigs | dict2items }}"
-      loop_control:
-        label: "{{ item.key }}"
-
-    - name: Check if images exist with podman
-      containers.podman.podman_image:
-        name: "{{ item.value }}"
-      loop: "{{ images | dict2items }}"
-      loop_control:
-        label: "{{ item.key }}"
-
-    - name: Cleaning up the images
-      containers.podman.podman_image:
-        name: "{{ item.value }}"
-        state: absent
-      loop: "{{ images | dict2items }}"
-      loop_control:
-        label: "{{ item.key }}"
+- name: Check cluster connection
+  kubernetes.core.k8s_info:
+    kind: Node
+    kubeconfig: "{{ kubeconfig }}"
+  register: cluster_check

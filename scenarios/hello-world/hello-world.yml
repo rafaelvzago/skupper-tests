@@ -1,6 +1,6 @@
 ---
 - name: Hello World test playbook
-  hosts: hello-world
+  hosts: all
   tasks:
     - name: Calling the role to check the environment
       ansible.builtin.include_role:

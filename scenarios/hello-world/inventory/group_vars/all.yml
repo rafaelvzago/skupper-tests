@@ -1,3 +1,9 @@
 ---
-ansible_user: your_username
-ansible_ssh_private_key_file: /path/to/your/private/key
+ansible_connection: local
+ansible_user: rzago
+images:
+  backend: quay.io/skupper/hello-world-backend
+  curl-image: quay.io/rzago/curl-telnet
+  frontend: quay.io/skupper/hello-world-frontend
+kubeconfig: /home/rzago/.kube/ocp-minikube
+debug: false
