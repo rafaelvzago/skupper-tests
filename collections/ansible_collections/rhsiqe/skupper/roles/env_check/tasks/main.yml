@@ -7,11 +7,6 @@
   tags:
     - always
   block:
-    # - name: Check the connection to the west cluster
-    #   ansible.builtin.shell: kubectl --kubeconfig={{ kubeconfigs.west }} get nodes
-    #   register: west
-    #   ignore_errors: true
-
     - name: Check the connection to the all clusters
       kubernetes.core.k8s_info:
         kubeconfig: "{{ kubeconfigs.east }}"
@@ -22,5 +17,20 @@
     - name: Iterate over each kubeconfig and check the connection
       ansible.builtin.include_tasks: check_connection.yml
       loop: "{{ kubeconfigs | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: Check if images exist with podman
+      containers.podman.podman_image:
+        name: "{{ item.value }}"
+      loop: "{{ images | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: Cleaning up the images
+      containers.podman.podman_image:
+        name: "{{ item.value }}"
+        state: absent
+      loop: "{{ images | dict2items }}"
       loop_control:
         label: "{{ item.key }}"
