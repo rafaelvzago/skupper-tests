@@ -1,0 +1,26 @@
+---
+- name: Debug all host vars
+  ansible.builtin.debug:
+    var: hostvars[inventory_hostname]
+
+- name: Check the connection to all clusters
+  tags:
+    - always
+  block:
+    # - name: Check the connection to the west cluster
+    #   ansible.builtin.shell: kubectl --kubeconfig={{ kubeconfigs.west }} get nodes
+    #   register: west
+    #   ignore_errors: true
+
+    - name: Check the connection to the all clusters
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfigs.east }}"
+        kind: Node
+      register: east
+      ignore_errors: true
+
+    - name: Iterate over each kubeconfig and check the connection
+      ansible.builtin.include_tasks: check_connection.yml
+      loop: "{{ kubeconfigs | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
