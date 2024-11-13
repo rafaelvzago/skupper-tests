@@ -66,10 +66,22 @@ To build and install the project, follow these steps:
 2. Use the `make` command to install the project dependencies and collections.
 
 ```bash
-make build
+git tag -a x.y.z -m "Release x.y.z"
+git push origin x.y.z
 ```
 
-# In your project
+## Tagging the collection release and pushing to GitHub
+
+Any change you make to the collection should be tagged and pushed to GitHub. To tag the collection release and push to GitHub, follow these steps:
+
+1. Use the `make` command to tag the collection release and push to GitHub.
+
+```bash
+make tag
+```
+
+
+# If you want to use the collection in your playbooks, follow these steps:
 
 1. You can now use the collection:
 
@@ -79,7 +91,7 @@ Add the following to your `requirements.yml`:
   - name: rhsiqe.skupper
     source: https://github.com/rafaelvzago/skupper-tests.git#collections/ansible_collections/rhsiqe/skupper
     type: git
-    version: 0.0.1
+    version: x.y.z
 ```
 
 2. Use the collection in your playbooks:
