@@ -2,7 +2,7 @@
 - name: Debug all host vars
   ansible.builtin.debug:
     var: hostvars[inventory_hostname]
-  when: debug | bool
+  when: env_shakeout_debug | bool
 
 - name: Check the connection to all clusters
   tags:
