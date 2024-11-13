@@ -4,4 +4,4 @@
   tasks:
     - name: Calling the role to check the environment
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.env_check
+        name: rhsiqe.skupper.env_shakeout

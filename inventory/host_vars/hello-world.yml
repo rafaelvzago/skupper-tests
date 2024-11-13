@@ -8,3 +8,4 @@ images:
 kubeconfigs:
   west: /home/rzago/.kube/ocp-minikube
   east: /home/rzago/.kube/ocp-minikube
+debug: false
