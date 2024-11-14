@@ -1,4 +1,4 @@
-Here's an updated README file for your `Skupper Tests Ansible Project` based on the new structure:
+Here's an updated `README.md` for the `Skupper Tests Ansible Project`, taking into account the more detailed file structure provided.
 
 ---
 
@@ -6,55 +6,78 @@ Here's an updated README file for your `Skupper Tests Ansible Project` based on 
 
 ## Project Structure and Content
 
-This project directory is structured following best practices recommended by the Ansible community. It includes organized roles, scenarios, and configurations to facilitate modularity, scalability, and reuse. This layout supports efficient configuration management and comprehensive testing of Skupper environments.
+This project directory is structured according to Ansible best practices, with organized roles, scenarios, and configurations that support modularity, scalability, and reusability. The layout is designed for effective configuration management and comprehensive testing of Skupper environments.
 
 ```plaintext
 skupper-tests-playbook/
-|── .devcontainer/
-|── .github/
-|   └── workflows/
-|       └── tests.yml
-|── .vscode/
+|── ansible.cfg
+|── .ansible-lint
+|── ansible-navigator.yml
 |── collections/
 |   └── ansible_collections/
 |       └── rhsiqe/
 |           └── skupper/
-|               ├── roles/
-|               │   ├── deploy_workload/
-|               │   ├── env_shakeout/
-|               │   ├── generate_namespaces/
-|               │   └── teardown_namespaces/
+|               ├── galaxy.yml
 |               ├── README.md
-|               └── galaxy.yml
+|               └── roles/
+|                   ├── deploy_workload/
+|                   │   ├── defaults/
+|                   │   │   └── main.yml
+|                   │   ├── README.md
+|                   │   └── tasks/
+|                   │       └── main.yml
+|                   ├── env_shakeout/
+|                   │   ├── defaults/
+|                   │   │   └── main.yml
+|                   │   ├── README.md
+|                   │   └── tasks/
+|                   │       └── main.yml
+|                   ├── generate_namespaces/
+|                   │   ├── defaults/
+|                   │   │   └── main.yml
+|                   │   ├── README.md
+|                   │   └── tasks/
+|                   │       └── main.yml
+|                   ├── install_skupper/
+|                   │   ├── defaults/
+|                   │   │   └── main.yml
+|                   │   ├── README.md
+|                   │   └── tasks/
+|                   │       └── main.yml
+|                   └── teardown_namespaces/
+|                       ├── defaults/
+|                       │   └── main.yml
+|                       ├── README.md
+|                       └── tasks/
+|                           └── main.yml
 |── scenarios/
 |   └── hello-world/
+|       ├── hello-world.bkp.yml
+|       ├── hello-world.yml
 |       └── inventory/
 |           ├── group_vars/
 |           │   └── all.yml
-|           ├── host_vars/
-|           │   ├── east.yml
-|           │   └── west.yml
-|           └── hosts.yml
-|       └── hello-world.yml
-|── venv/
-|── ansible.cfg
-|── ansible-navigator.yml
+|           ├── hosts.yml
+|           └── host_vars/
+|               ├── east.yml
+|               └── west.yml
 |── devfile.yaml
+|── .gitignore
+|── LICENSE
 |── Makefile
 |── README.md
-|── requirements.yml
 |── requirements.txt
 ```
 
 ## Key Files and Directories
 
-- **`collections/requirements.yml`**: Specifies required Ansible collections, ensuring version compatibility.
-- **`scenarios/hello-world/`**: Contains the sample scenario with `inventory` and the `hello-world.yml` playbook.
-- **`roles/`**: Includes modular roles under `ansible_collections/rhsiqe/skupper/roles`, designed for reuse.
+- **`collections/requirements.yml`**: Specifies required Ansible collections, ensuring compatibility and reproducibility.
+- **`scenarios/hello-world/`**: Contains an example scenario with `inventory` and the `hello-world.yml` playbook for deploying and testing a Skupper setup.
+- **`roles/`**: Modular roles within `ansible_collections/rhsiqe/skupper/roles`, structured for reusability.
 - **`venv/`**: Directory for the Python virtual environment and dependencies.
-- **`ansible.cfg`**: Configures Ansible settings specific to this project.
-- **`requirements.yml`**: Defines required Ansible collections with versioning for reproducibility.
-- **`Makefile`**: Automates common tasks, enhancing ease of project management.
+- **`ansible.cfg`**: Project-specific Ansible configurations.
+- **`requirements.yml`**: Lists required Ansible collections with versioning.
+- **`Makefile`**: Contains automation scripts for common tasks, simplifying project management.
 
 ## Compatibility
 
@@ -65,7 +88,7 @@ This project has been tested with `ansible-lint >= 24.2.0` and is compatible wit
 To build and install the project:
 
 1. Clone the repository and navigate to the project directory.
-2. Use the `make` command to install dependencies and collections:
+2. Run `make install` to install dependencies and required collections:
 
    ```bash
    make install
@@ -75,13 +98,13 @@ To build and install the project:
 
 To tag a new release and push to GitHub:
 
-1. Use the `make` command to tag and push:
+1. Use the `make tag` command to automate the tagging and pushing process:
 
    ```bash
    make tag
    ```
 
-2. Alternatively, manually tag and push with:
+2. Alternatively, you can manually tag and push:
 
    ```bash
    git tag -a x.y.z -m "Release x.y.z"
@@ -92,7 +115,7 @@ To tag a new release and push to GitHub:
 
 To include this collection in other playbooks:
 
-1. Add it to your `requirements.yml`:
+1. Add the collection to your `requirements.yml`:
 
    ```yaml
    - name: rhsiqe.skupper
@@ -101,7 +124,7 @@ To include this collection in other playbooks:
      version: x.y.z
    ```
 
-2. Reference the collection in playbooks as follows:
+2. Reference the collection in your playbooks:
 
    ```yaml
    - hosts: localhost
@@ -118,7 +141,7 @@ To include this collection in other playbooks:
 
 ## Inventory Structure Explanation
 
-The **hello-world** scenario showcases a flexible inventory structure that allows for multiple environment configurations. Key files in the inventory facilitate customization of global, group, and host-specific variables.
+The **hello-world** scenario showcases a flexible inventory structure for multi-environment configuration. The inventory allows global, group, and host-specific variables.
 
 ### `hello-world/hello-world.yml`
 
@@ -139,7 +162,7 @@ This playbook calls the `env_shakeout` and `deploy_workload` roles to verify env
 
 ### Inventory File Structure
 
-- **`group_vars/all.yml`**: Sets global variables for all hosts in the inventory. Sample configuration:
+- **`group_vars/all.yml`**: Defines global variables for all hosts in the inventory. Sample configuration:
 
   ```yaml
   ansible_connection: local
@@ -152,11 +175,11 @@ This playbook calls the `env_shakeout` and `deploy_workload` roles to verify env
   debug: false
   ```
 
-  - `ansible_connection`: Specifies connection type, set to `local` for localhost testing.
-  - `images`: Points to container images for various application components.
-  - `kubeconfig`: Specifies the path to the Kubernetes configuration file.
+  - `ansible_connection`: Sets the connection type, here as `local` for local testing.
+  - `images`: Defines container images for different application components.
+  - `kubeconfig`: Specifies the Kubernetes configuration file path.
 
-- **`hosts.yml`**: Lists hosts under the `all` group, with `west` and `east` as individual entries.
+- **`hosts.yml`**: Lists hosts (`west` and `east`) in the `all` group.
 
   ```yaml
   ---
@@ -166,15 +189,16 @@ This playbook calls the `env_shakeout` and `deploy_workload` roles to verify env
       east:
   ```
 
-- **`host_vars/east.yml` and `host_vars/west.yml`**: Customize configuration per host, such as kubeconfig paths or environment-specific variables.
+- **`host_vars/east.yml` and `host_vars/west.yml`**: Customize host-specific configurations, such as `kubeconfig` paths or environment variables.
 
   ```yaml
   # Example for west host configuration
   kubeconfig: /path/to/west/kubeconfig
   ```
 
-This inventory structure allows flexible cluster-specific configuration in `host_vars` while maintaining shared settings in `group_vars`. It enables easy expansion for additional clusters or scenarios.
+This flexible structure allows cluster-specific configurations in `host_vars` while maintaining global settings in `group_vars`, enabling easy expansion for new clusters or environments.
 
 ## License
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for more details.
+
