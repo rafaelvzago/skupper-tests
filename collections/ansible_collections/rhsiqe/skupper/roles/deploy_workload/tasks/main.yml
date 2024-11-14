@@ -1,0 +1,43 @@
+# roles/deploy_workload/tasks/main.yml
+---
+- name: Set fact for namespace
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Deploy workload in the specified namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "{{ deploy_workload_deployment_name }}"
+        namespace: "{{ namespace }}"
+      spec:
+        replicas: "{{ deploy_workload_replicas }}"
+        selector:
+          matchLabels:
+            app: "{{ deploy_workload_deployment_name }}"
+        template:
+          metadata:
+            labels:
+              app: "{{ deploy_workload_deployment_name }}"
+          spec:
+            containers:
+              - name: "{{ deploy_workload_deployment_name }}"
+                image: "{{ deploy_workload_workload_image }}"
+
+- name: Wait for deployment to be ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ namespace }}"
+  register: workload_pods
+  until: workload_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == deploy_workload_replicas
+  retries: 30
+  delay: 10
+
+- name: Display pods
+  ansible.builtin.debug:
+    msg: "{{ workload_pods.resources | map(attribute='metadata.name') | list }}"

@@ -1,0 +1,4 @@
+# roles/deploy_workload/defaults/main.yml
+deploy_workload_namespace_name: default
+deploy_workload_deployment_name: "app"
+deploy_workload_replicas: 1
