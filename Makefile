@@ -8,3 +8,4 @@ build:
 	ansible-galaxy collection build --force && \
 	ansible-galaxy collection install -f $(TAR_PATH) --force && \
 	cd $(ROOT_PATH)
+	rm -rf $(COLLECTION_PATH)/$(TAR_NAME)
