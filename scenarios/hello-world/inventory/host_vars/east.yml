@@ -1,2 +1,3 @@
 ---
-# kubeconfig: /path/to/west/kubeconfig
+# kubeconfig: /path/to/east/kubeconfig
+namespace_name: hello-world-east

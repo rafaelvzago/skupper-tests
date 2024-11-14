@@ -5,3 +5,15 @@
     - name: Calling the role to check the environment
       ansible.builtin.include_role:
         name: rhsiqe.skupper.env_shakeout
+
+    - name: Calling the role to generate the namespaces
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.generate_namespaces
+      vars:
+        namespace_prefix: zago
+
+    - name: Deleting namespaces
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.teardown_namespaces
+      vars:
+        namespace_prefix: zago
