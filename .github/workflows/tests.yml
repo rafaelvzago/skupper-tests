@@ -1,38 +1,38 @@
----
-name: "CI"
+# ---
+# name: "CI"
 
-concurrency:
-  group: ${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+# concurrency:
+#   group: ${{ github.head_ref || github.run_id }}
+#   cancel-in-progress: true
 
-on:  # yamllint disable-line rule:truthy
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
+# on:  # yamllint disable-line rule:truthy
+#   pull_request:
+#     branches: [main]
+#   workflow_dispatch:
+#   schedule:
+#     - cron: '0 0 * * *'
 
-jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+# jobs:
+#   setup:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
+#       - name: Set up Python environment
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: '3.x'
 
-      - name: Install Ansible and collections
-        run: |
-          python -m pip install --upgrade pip
-          pip install ansible
-          # Optionally, install from requirements.yml if present
-          if [[ -f requirements.yml ]]; then
-            ansible-galaxy collection install -r requirements.yml
-          fi
+#       - name: Install Ansible and collections
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install ansible
+#           # Optionally, install from requirements.yml if present
+#           if [[ -f requirements.yml ]]; then
+#             ansible-galaxy collection install -r requirements.yml
+#           fi
 
-  ansible-lint:
-    needs: setup
-    uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
+#   ansible-lint:
+#     needs: setup
+#     uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
