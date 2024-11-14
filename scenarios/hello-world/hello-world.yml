@@ -12,6 +12,12 @@
       vars:
         namespace_prefix: zago
 
+    - name: Deploying backend and frontend
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.deploy_workload
+      vars:
+        namespace_prefix: zago
+
     - name: Deleting namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_namespaces

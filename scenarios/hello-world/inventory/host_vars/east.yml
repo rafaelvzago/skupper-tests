@@ -1,3 +1,6 @@
 ---
 # kubeconfig: /path/to/east/kubeconfig
+kubeconfig: /home/rzago/.kube/ocp-minikube
 namespace_name: hello-world-east
+deploy_workload_workload_image: quay.io/skupper/hello-world-backend:latest
+deploy_workload_deployment_name: "backend"

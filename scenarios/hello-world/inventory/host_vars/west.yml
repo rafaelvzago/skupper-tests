@@ -1,3 +1,6 @@
 ---
 # kubeconfig: /path/to/west/kubeconfig
+kubeconfig: /home/rzago/.kube/ocp-minikube
 namespace_name: hello-world-west
+deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
+deploy_workload_deployment_name: "frontend"
