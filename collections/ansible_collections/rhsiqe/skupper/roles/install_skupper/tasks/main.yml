@@ -1,0 +1,40 @@
+# roles/install_skupper/tasks/main.yml
+---
+- name: Ensure Helm is installed
+  ansible.builtin.package:
+    name: helm
+    state: present
+  become: true
+
+- name: Cleaning skupper temprary directory
+  ansible.builtin.file:
+    dest: /tmp/skupper
+    state: absent
+    force: true
+
+- name: Clone Skupper repository
+  ansible.builtin.git:
+    repo: "{{ install_skupper_skupper_repository }}"
+    dest: /tmp/skupper
+    version: "{{ install_skupper_skupper_branch }}"
+    update: true
+
+- name: Install Skupper by applying CRDs
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: /tmp/skupper/api/types/crds
+  failed_when: false
+
+- name: Install the Skupper Controller
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ install_skupper_skupper_controller_manifest }}"
+  register: skupper_controller_results
+  failed_when: false
+
+- name: Deleting Cloned Skupper repository directory
+  ansible.builtin.file:
+    dest: /tmp/skupper
+    state: absent
+  changed_when: false
