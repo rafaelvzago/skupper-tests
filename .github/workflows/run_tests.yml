@@ -3,9 +3,10 @@ name: Run Ansible Role Tests with Minikube
 on:
   push:
     branches:
-      - zago
-      - "feature/**"
+      - "*"
   pull_request:
+    branches:
+      - "*"
 
 jobs:
   test:
