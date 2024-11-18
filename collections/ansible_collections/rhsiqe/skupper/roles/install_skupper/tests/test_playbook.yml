@@ -1,0 +1,10 @@
+---
+- name: Test deploy_workload role
+  hosts: all
+  tasks:
+    - name: Installing Skupper
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.install_skupper
+      when:
+        - "'localhost' in inventory_hostname"
+        - not skip_skupper_install | default(false) | bool

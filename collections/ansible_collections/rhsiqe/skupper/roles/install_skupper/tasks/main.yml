@@ -1,11 +1,5 @@
 # roles/install_skupper/tasks/main.yml
 ---
-- name: Ensure Helm is installed
-  ansible.builtin.package:
-    name: helm
-    state: present
-  become: true
-
 - name: Cleaning skupper temprary directory
   ansible.builtin.file:
     dest: /tmp/skupper
