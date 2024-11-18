@@ -28,7 +28,7 @@ jobs:
         run: |
           make build
 
-      - name: Install Ansible and Dependencies and requirements.yml
+      - name: Install Ansible and Dependencies and requirements.txt
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
