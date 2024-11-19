@@ -1,38 +1,93 @@
-Role Name
-=========
+# Role: expose_connector
 
-A brief description of the role goes here.
+This Ansible role manages the creation and deployment of Skupper connectors in a Kubernetes cluster. The role dynamically generates a connector manifest from a Jinja2 template and applies it to the cluster, allowing users to configure routing and connectivity for their applications.
 
-Requirements
-------------
+## Tasks
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- **Set Manifest File Path:**
+  - Defines the path for the generated connector manifest and constructs the target namespace.
 
-Role Variables
---------------
+- **Delete Existing Manifest:**
+  - Removes any previously generated connector manifest file to ensure the latest template is applied.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- **Render Manifest Template:**
+  - Generates the connector manifest using the provided Jinja2 template and role variables.
 
-Dependencies
-------------
+- **Apply Manifest:**
+  - Deploys the generated connector manifest to the target namespace in the Kubernetes cluster.
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- **Debug Results:**
+  - Outputs the results of the connector application for troubleshooting and verification.
 
-Example Playbook
-----------------
+## Requirements
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+- Ansible 2.11 or newer
+- `kubernetes.core` collection installed on the control node
+- A Kubernetes cluster accessible via a valid `kubeconfig`
+- Skupper operator deployed in the target namespace
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+## Role Variables
 
-License
--------
+### Default Variables (from `defaults/main.yml`):
+- `expose_connector_routing_key`: Routing key for the connector (default: `backend`).
+- `expose_connector_metadata_name`: Metadata name for the connector (default: `backend`).
+- `expose_connector_port`: Port for the connector (default: `8080`).
+- `expose_connector_selector`: Selector for targeting pods (default: `app=backend`).
+- `expose_connector_manifest_template`: Path to the Jinja2 template for the connector manifest (default: `connector.yml.j2`).
+- `expose_connector_state`: Desired state of the resource (`present` or `absent`, default: `present`).
 
-BSD
+### Required Variables (from inventory or host_vars):
+- `namespace_prefix`: Prefix for the Kubernetes namespace.
+- `namespace_name`: Base name of the Kubernetes namespace.
+- `kubeconfig`: Path to the kubeconfig file for connecting to the cluster.
 
-Author Information
-------------------
+## Template Details
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+The connector manifest template (`templates/connector.yml.j2`) is structured as follows:
+
+```yaml
+apiVersion: skupper.io/v2alpha1
+kind: Connector
+metadata:
+  name: {{ expose_connector_metadata_name }}
+spec:
+  routingKey: {{ expose_connector_routing_key }}
+  port: {{ expose_connector_port }}
+  selector: {{ expose_connector_selector }}
+```
+
+## Example Usage
+
+### Playbook
+
+```yaml
+- hosts: all
+  tasks:
+    - name: Include the expose_connector role
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.expose_connector
+      vars:
+        namespace_prefix: zago
+        namespace_name: hello-world
+        kubeconfig: /path/to/kubeconfig
+```
+
+### Inventory (host_vars)
+
+```yaml
+# host_vars for target host
+namespace_prefix: zago
+namespace_name: hello-world
+kubeconfig: /path/to/kubeconfig
+```
+
+## Notes
+
+- The namespace for the connector is derived from `namespace_prefix` and `namespace_name` (e.g., `zago-hello-world`).
+- Ensure that `kubeconfig` is valid and accessible from the control node.
+- This role leverages the `kubernetes.core.k8s` module for declarative resource management in Kubernetes.
+- The connector manifest template can be customized as needed by modifying `templates/connector.yml.j2`.
+
+## License
+
+This project is licensed under the Apache License, Version 2.0. See the LICENSE file for details.
