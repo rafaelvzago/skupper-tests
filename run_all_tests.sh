@@ -15,6 +15,7 @@ mkdir -p $RESULTS_DIR
 
 # Define the order of roles to test, with teardown last
 ROLE_ORDER=(
+  "env_shakeout"
   "generate_namespaces"
   "deploy_workload"
   "install_skupper"
