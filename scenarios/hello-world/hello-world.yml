@@ -34,6 +34,13 @@
         # Only when the namespace has east in the inventory_hostname
         - "'east' in inventory_hostname"
 
+    - name: Consuming the service at the frontend (west) site
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.consume_service
+      when:
+        # Only when the namespace has west in the inventory_hostname
+        - "'west' in inventory_hostname"
+
     - name: Deleting namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_namespaces
