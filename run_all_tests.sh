@@ -21,7 +21,9 @@ ROLE_ORDER=(
   "install_skupper"
   "skupper_site"
   "expose_connector"
-  "teardown_namespaces"  # Teardown should be the last role to run
+  "consume_service"
+  "access_grant"
+  "teardown_namespaces"
 )
 
 # Function to calculate the number of dots needed
@@ -45,7 +47,7 @@ run_role_test() {
     add_dots "$role"
 
     # Redirect full output to the log file, and only show the simplified result
-    if ansible-playbook -i "$inventory" "$playbook" > "$LOG_FILE" 2>&1; then
+    if ansible-playbook -i "$inventory" "$playbook" >> "$LOG_FILE" 2>&1; then
       echo " [PASSED]"
     else
       echo " [FAILED]"
