@@ -1,0 +1,10 @@
+---
+- name: Test deploy_workload role
+  hosts: all
+  tasks:
+    - name: Consuming service from backend
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.consume_service
+      when:
+        # Only when the namespace has east in the inventory_hostname
+        - "'localhost' in inventory_hostname"
