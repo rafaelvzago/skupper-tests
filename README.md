@@ -1,162 +1,120 @@
 # Skupper Tests Ansible Project
 
-## Project Structure and Content
+## Overview
 
-This project directory is structured following Ansible best practices, with modular roles, scenarios, and configurations designed for scalability, reusability, and effective testing of Skupper environments. It also includes tests for each role to ensure consistent functionality.
+This project is designed to test and manage Skupper environments using Ansible roles and scenarios. Each role is modular and includes dedicated tests to ensure consistent functionality. The structure adheres to Ansible best practices, enabling scalability, reusability, and ease of testing.
+
+---
+
+## Key Roles
+
+### **1. `deploy_workload`**
+- **Purpose**: Deploys backend and frontend workloads in specified namespaces.
+- **Tests**: Verifies workloads are deployed and running in Kubernetes.
+
+### **2. `env_shakeout`**
+- **Purpose**: Checks the environment for readiness before executing Skupper-related operations.
+- **Tests**: Ensures Kubernetes and required tools are accessible.
+
+### **3. `generate_namespaces`**
+- **Purpose**: Creates namespaces with a specified prefix to segment workloads and services.
+- **Tests**: Validates namespace creation and checks correct naming conventions.
+
+### **4. `install_skupper`**
+- **Purpose**: Installs Skupper by applying CRDs and deploying the Skupper controller.
+- **Tests**: Confirms CRDs are applied and the Skupper controller is running.
+
+### **5. `teardown_namespaces`**
+- **Purpose**: Removes namespaces and cleans up Skupper-related resources.
+- **Tests**: Validates the successful deletion of namespaces and associated resources.
+
+### **6. `skupper_site`**
+- **Purpose**: Configures Skupper sites with site-specific settings like `linkAccess`.
+- **Tests**: Verifies Skupper site manifests and validates pod readiness.
+
+---
+
+## Simplified Folder Structure
 
 ```plaintext
 skupper-tests-playbook/
-├── ansible.cfg
-├── .ansible-lint
-├── ansible-navigator.yml
-├── collections/
-│   ├── ansible_collections/
-│   │   └── rhsiqe/
-│   │       └── skupper/
-│   │           ├── galaxy.yml
-│   │           ├── README.md
-│   │           └── roles/
-│   │               ├── deploy_workload/
-│   │               │   ├── defaults/
-│   │               │   │   └── main.yml
-│   │               │   ├── README.md
-│   │               │   ├── tasks/
-│   │               │   │   └── main.yml
-│   │               │   └── tests/
-│   │               │       ├── group_vars/
-│   │               │       │   └── all.yml
-│   │               │       ├── host_vars/
-│   │               │       │   └── localhost.yml
-│   │               │       ├── inventory/
-│   │               │       │   └── hosts.yml
-│   │               │       └── test_playbook.yml
-│   │               ├── env_shakeout/
-│   │               │   ├── defaults/
-│   │               │   │   └── main.yml
-│   │               │   ├── README.md
-│   │               │   └── tasks/
-│   │               │       └── main.yml
-│   │               ├── generate_namespaces/
-│   │               │   ├── defaults/
-│   │               │   │   └── main.yml
-│   │               │   ├── README.md
-│   │               │   ├── tasks/
-│   │               │   │   └── main.yml
-│   │               │   └── tests/
-│   │               │       ├── group_vars/
-│   │               │       │   └── all.yml
-│   │               │       ├── host_vars/
-│   │               │       │   └── localhost.yml
-│   │               │       ├── inventory/
-│   │               │       │   └── hosts.yml
-│   │               │       └── test_playbook.yml
-│   │               ├── install_skupper/
-│   │               │   ├── defaults/
-│   │               │   │   └── main.yml
-│   │               │   ├── README.md
-│   │               │   ├── tasks/
-│   │               │   │   └── main.yml
-│   │               │   └── tests/
-│   │               │       ├── group_vars/
-│   │               │       │   └── all.yml
-│   │               │       ├── host_vars/
-│   │               │       │   └── localhost.yml
-│   │               │       ├── inventory/
-│   │               │       │   └── hosts.yml
-│   │               │       └── test_playbook.yml
-│   │               └── teardown_namespaces/
-│   │                   ├── defaults/
-│   │                   │   └── main.yml
-│   │                   ├── README.md
-│   │                   ├── tasks/
-│   │                   │   └── main.yml
-│   │                   └── tests/
-│   │                       ├── group_vars/
-│   │                       │   └── all.yml
-│   │                       ├── host_vars/
-│   │                       │   └── localhost.yml
-│   │                       ├── inventory/
-│   │                       │   └── hosts.yml
-│   │                       └── test_playbook.yml
-├── devfile.yaml
-├── .gitignore
-├── LICENSE
-├── Makefile
-├── README.md
-├── requirements.txt
-├── run_all_tests.sh
-├── scenarios/
-│   └── hello-world/
-│       ├── hello-world.bkp.yml
-│       ├── hello-world.yml
-│       └── inventory/
-│           ├── group_vars/
-│           │   └── all.yml
-│           ├── hosts.yml
-│           └── host_vars/
-│               ├── east.yml
-│               └── west.yml
-└── test_results/
-    ├── deploy_workload_result.log
-    ├── generate_namespaces_result.log
-    ├── install_skupper_result.log
-    └── teardown_namespaces_result.log
+├── ansible.cfg               # Ansible configuration file
+├── Makefile                  # Automates common tasks
+├── README.md                 # Project documentation
+├── run_all_tests.sh          # Script to execute all role tests
+├── scenarios/                # Contains example scenarios (e.g., hello-world/)
+├── collections/              # Ansible collections for modular roles
+│   └── ansible_collections/
+│       └── rhsiqe/
+│           └── skupper/
+│               ├── roles/
+│               │   ├── deploy_workload/      # Deploys workloads
+│               │   ├── env_shakeout/         # Checks environment readiness
+│               │   ├── generate_namespaces/  # Creates namespaces
+│               │   ├── install_skupper/      # Installs Skupper
+│               │   ├── skupper_site/         # Configures Skupper sites
+│               │   └── teardown_namespaces/  # Deletes namespaces
+│               └── galaxy.yml                # Metadata for the collection
+├── test_results/             # Logs for role tests
+└── requirements.txt          # Python dependencies
 ```
 
-## Key Files and Directories
-
-- **`collections/requirements.yml`**: Specifies required Ansible collections, ensuring compatibility and reproducibility.
-- **`roles/`**: Contains modular roles under `ansible_collections/rhsiqe/skupper/roles`, each with tasks, default variables, and associated tests.
-- **`scenarios/hello-world/`**: Provides an example scenario with inventory and playbooks for testing a Skupper setup.
-- **`run_all_tests.sh`**: A script to execute all role tests and store results in the `test_results` directory.
-- **`test_results/`**: Contains logs for test runs of each role.
-- **`Makefile`**: Automates tasks like dependency installation and tagging releases.
+---
 
 ## Testing Roles
 
-Each role includes a `tests/` directory with:
-- A dedicated `test_playbook.yml`.
-- Host and group variables under `host_vars/` and `group_vars/`.
-- An inventory file for running isolated tests.
+### **1. Running All Tests**
 
-### Running All Tests
+To test all roles, use the provided script:
 
-To execute tests for all roles:
-
-1. Ensure you have dependencies installed:
+1. Install dependencies:
    ```bash
    make install
    ```
-
-2. Run the test script:
+2. Run all tests:
    ```bash
    ./run_all_tests.sh
    ```
+3. Test logs are saved in the `test_results/` directory.
 
-3. Logs for each role will be stored in the `test_results/` directory.
-
-### Testing Individual Roles
+### **2. Testing Individual Roles**
 
 To test a specific role:
 
-1. Navigate to the role’s `tests/` directory.
-2. Execute the `test_playbook.yml` using Ansible:
+1. Navigate to the role's `tests/` directory:
+   ```plaintext
+   collections/ansible_collections/rhsiqe/skupper/roles/<role_name>/tests/
+   ```
+2. Run the `test_playbook.yml`:
    ```bash
    ansible-playbook -i inventory/hosts.yml test_playbook.yml
    ```
 
+---
+
+## Scenarios
+
+### Example: **Hello-World Scenario**
+- Location: `scenarios/hello-world/`
+- Contains:
+  - **`inventory/`**: Host and group variables for east and west environments.
+  - **`hello-world.yml`**: Playbook that integrates multiple roles.
+
+### Running the Scenario:
+```bash
+ansible-playbook -i scenarios/hello-world/inventory/hosts.yml scenarios/hello-world/hello-world.yml
+```
+
+---
+
 ## Compatibility
 
-- Tested with `ansible-lint >= 24.2.0`.
-- Compatible with the latest stable version of `ansible-core`.
+- **Tested with**: `ansible-lint >= 24.2.0`
+- **Compatible with**: The latest stable version of `ansible-core`
+
+---
 
 ## License
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
 
----
-
-### Key Additions:
-1. **Test Details**: Highlighted the `tests/` directory for each role, the `run_all_tests.sh` script, and individual role testing.
-2. **Results Directory**: Included details on `test_results/` for logs.
-3. **Streamlined Structure**: Matched the updated folder structure while maintaining clarity.
