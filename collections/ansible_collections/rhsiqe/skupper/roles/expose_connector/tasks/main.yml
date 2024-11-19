@@ -1,0 +1,31 @@
+---
+# tasks file for expose_connector
+
+- name: Set manifest file path
+  ansible.builtin.set_fact:
+    expose_connector_file: "/tmp/connector-{{ inventory_hostname }}.yml"
+    expose_connector_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Delete existing connector manifest if present
+  ansible.builtin.file:
+    path: "{{ expose_connector_file }}"
+    state: absent
+  failed_when: false
+
+- name: Render connector manifest from template
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ expose_connector_manifest_template }}"
+    dest: "{{ expose_connector_file }}"
+    mode: '0644'
+
+- name: Apply connector manifest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ expose_connector_namespace }}"
+    state: "{{ expose_connector_state }}"
+    src: "{{ expose_connector_file }}"
+  register: expose_connector_results
+
+- name: Debug connector application results
+  ansible.builtin.debug:
+    var: expose_connector_results

@@ -2,6 +2,6 @@
 - name: Test deploy_workload role
   hosts: all
   tasks:
-    - name: Calling the role to check the environment
+    - name: Deploying backend for testing
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.env_shakeout
+        name: rhsiqe.skupper.deploy_workload

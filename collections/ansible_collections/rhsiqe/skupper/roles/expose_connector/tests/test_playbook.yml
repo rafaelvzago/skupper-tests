@@ -1,0 +1,10 @@
+---
+- name: Test deploy_workload role
+  hosts: all
+  tasks:
+    - name: Exposing the connector at the backend (east) site
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.expose_connector
+      when:
+        # Only when the namespace has east in the inventory_hostname
+        - "'localhost' in inventory_hostname"

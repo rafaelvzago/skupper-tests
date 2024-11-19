@@ -1,9 +1,8 @@
 ---
 kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config"
 namespace_prefix: test
-namespace_name: workload
+namespace_name: skupper
 install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git'
 install_skupper_skupper_branch: 'v2'
 install_skupper_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
 install_skupper_skupper_release_name: skupper-setup
-install_skupper_helm_install_scope: cluster
