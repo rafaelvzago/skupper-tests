@@ -21,7 +21,6 @@
       ansible.builtin.include_role:
         name: rhsiqe.skupper.install_skupper
       when:
-        - "'west' in inventory_hostname"
         - not skip_skupper_install | default(false) | bool
 
     - name: Creating Skupper sites

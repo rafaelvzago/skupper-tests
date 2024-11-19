@@ -1,21 +1,25 @@
 # roles/install_skupper/tasks/main.yml
 ---
-- name: Cleaning skupper temprary directory
+- name: Create a folder name for git
+  ansible.builtin.set_fact:
+    skupper_folder: "/tmp/{{ inventory_hostname }}-skupper"
+
+- name: Clean Skupper temporary directory
   ansible.builtin.file:
-    dest: /tmp/skupper
+    path: "{{ skupper_folder }}"
     state: absent
     force: true
 
 - name: Clone Skupper repository
   ansible.builtin.git:
     repo: "{{ install_skupper_skupper_repository }}"
-    dest: /tmp/skupper
+    dest: "{{ skupper_folder }}"
     version: "{{ install_skupper_skupper_branch }}"
     update: true
 
 - name: Find CRDs in the directory
   ansible.builtin.find:
-    paths: /tmp/skupper/api/types/crds/
+    paths: "{{ skupper_folder }}/api/types/crds/"
     patterns: "*.yaml"
   register: crd_files
 
@@ -35,13 +39,15 @@
 
 - name: Install the Skupper Controller
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     state: present
     src: "{{ install_skupper_skupper_controller_manifest }}"
   register: skupper_controller_results
   failed_when: false
 
-- name: Deleting Cloned Skupper repository directory
+- name: Clean up Skupper repository directory
   ansible.builtin.file:
-    dest: /tmp/skupper
+    path: "{{ skupper_folder }}"
     state: absent
+    force: true
   changed_when: false
