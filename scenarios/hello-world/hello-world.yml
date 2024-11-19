@@ -27,6 +27,15 @@
       ansible.builtin.include_role:
         name: rhsiqe.skupper.skupper_site
 
+    - name: Exposing the connector at the backend (east) site
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.expose_connector
+      when:
+        # Only when the namespace has east in the inventory_hostname
+        - "'east' in inventory_hostname"
+
     - name: Deleting namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_namespaces
+      when:
+        - not skip_teardown | default(false) | bool
