@@ -1,0 +1,10 @@
+---
+- name: Test deploy_workload role
+  hosts: all
+  tasks:
+    - name: Install the Skupper Controller
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ install_skupper_skupper_controller_manifest }}"
+      register: skupper_controller_results
+      failed_when: false

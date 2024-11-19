@@ -13,11 +13,24 @@
     version: "{{ install_skupper_skupper_branch }}"
     update: true
 
+- name: Find CRDs in the directory
+  ansible.builtin.find:
+    paths: /tmp/skupper/api/types/crds/
+    patterns: "*.yaml"
+  register: crd_files
+
+- name: Debug CRDs found
+  ansible.builtin.debug:
+    var: crd_files.files
+
 - name: Install Skupper by applying CRDs
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: present
-    src: /tmp/skupper/api/types/crds
+    src: "{{ item.path }}"
+  loop: "{{ crd_files.files }}"
+  loop_control:
+    label: "{{ item.path }}"
   failed_when: false
 
 - name: Install the Skupper Controller

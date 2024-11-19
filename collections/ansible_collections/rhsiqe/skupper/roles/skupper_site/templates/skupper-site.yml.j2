@@ -1,0 +1,9 @@
+apiVersion: skupper.io/v2alpha1
+kind: Site
+metadata:
+  name: {{ namespace_name }}
+  namespace: {{ namespace_prefix }}-{{ namespace_name }}
+{% if skupper_site_include_spec %}
+spec:
+  linkAccess: {{ skupper_site_link_access }}
+{% endif %}

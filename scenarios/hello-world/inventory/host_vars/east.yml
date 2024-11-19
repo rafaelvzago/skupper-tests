@@ -1,6 +1,14 @@
 ---
-# kubeconfig: /path/to/east/kubeconfig
+# Kubeconfig path for east site
 kubeconfig: /home/rzago/.kube/ocp-minikube
+
+# Namespace configuration
 namespace_name: hello-world-east
+
+# Deployment configuration for workload
 deploy_workload_workload_image: quay.io/skupper/hello-world-backend:latest
 deploy_workload_deployment_name: "backend"
+
+# Skupper site configuration
+skupper_site_include_spec: false  # Do not include the `spec` section for the east site
+skupper_site_manifest_template: "collections/ansible_collections/rhsiqe/skupper/roles/skupper_site/templates/skupper-site.yml.j2"

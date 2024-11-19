@@ -1,6 +1,15 @@
 ---
-# kubeconfig: /path/to/west/kubeconfig
+# Kubeconfig path for west site
 kubeconfig: /home/rzago/.kube/ocp-minikube
+
+# Namespace configuration
 namespace_name: hello-world-west
+
+# Deployment configuration for workload
 deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
 deploy_workload_deployment_name: "frontend"
+
+# Skupper site configuration
+skupper_site_include_spec: true  # Include the `spec` section for the west site
+skupper_site_link_access: allow  # Set linkAccess for west site
+skupper_site_manifest_template: "collections/ansible_collections/rhsiqe/skupper/roles/skupper_site/templates/skupper-site.yml.j2"

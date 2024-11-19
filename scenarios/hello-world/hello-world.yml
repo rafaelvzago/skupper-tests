@@ -25,6 +25,12 @@
         - "'west' in inventory_hostname"
         - not skip_skupper_install | default(false) | bool
 
+    - name: Creating Skupper sites
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.skupper_site
+      vars:
+        namespace_prefix: zago
+
     - name: Deleting namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_namespaces
