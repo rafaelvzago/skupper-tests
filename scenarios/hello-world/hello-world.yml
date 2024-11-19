@@ -1,6 +1,9 @@
 ---
 - name: Hello World test playbook
   hosts: all
+  vars:
+    namespace_prefix: zago
+
   tasks:
     - name: Calling the role to check the environment
       ansible.builtin.include_role:
@@ -9,14 +12,10 @@
     - name: Calling the role to generate the namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.generate_namespaces
-      vars:
-        namespace_prefix: zago
 
     - name: Deploying backend and frontend
       ansible.builtin.include_role:
         name: rhsiqe.skupper.deploy_workload
-      vars:
-        namespace_prefix: zago
 
     - name: Installing Skupper
       ansible.builtin.include_role:
@@ -28,11 +27,7 @@
     - name: Creating Skupper sites
       ansible.builtin.include_role:
         name: rhsiqe.skupper.skupper_site
-      vars:
-        namespace_prefix: zago
 
     - name: Deleting namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_namespaces
-      vars:
-        namespace_prefix: zago
