@@ -61,7 +61,7 @@ skupper-tests-playbook/
 
 ---
 
-## Testing Roles
+## Local install
 
 ### **1. Running All Tests**
 
@@ -69,26 +69,60 @@ To test all roles, use the provided script:
 
 1. Install dependencies:
    ```bash
+   make build
+   ```
+---
+
+## Testing Roles
+
+### **1. Running All Tests**
+
+To test all roles in the correct order, including logging and teardown:
+
+1. Install dependencies:
+   ```bash
    make install
    ```
-2. Run all tests:
+2. Run all tests with the provided script:
    ```bash
    ./run_all_tests.sh
    ```
-3. Test logs are saved in the `test_results/` directory.
+3. The script runs tests in the following order:
+   - `generate_namespaces`
+   - `deploy_workload`
+   - `install_skupper`
+   - `skupper_site`
+   - `expose_connector`
+   - `teardown_namespaces` (always last)
+4. Logs for each role test are saved in the `test_results/` directory, and the script outputs a summary in the format:
+   ```plaintext
+   generate_namespaces................................. [PASSED]
+   deploy_workload..................................... [PASSED]
+   install_skupper..................................... [FAILED]
+   skupper_site........................................ [SKIPPED] (No test_playbook.yml or inventory found)
+   ```
+
+   - **`[PASSED]`**: The role test succeeded.
+   - **`[FAILED]`**: The role test failed (details provided in the logs).
+   - **`[SKIPPED]`**: The role test was skipped due to missing files.
+
+5. Review detailed logs in the `test_results/` directory for debugging.
+
+---
 
 ### **2. Testing Individual Roles**
 
 To test a specific role:
 
 1. Navigate to the role's `tests/` directory:
-   ```plaintext
-   collections/ansible_collections/rhsiqe/skupper/roles/<role_name>/tests/
+   ```bash
+   cd collections/ansible_collections/rhsiqe/skupper/roles/<role_name>/tests/
    ```
-2. Run the `test_playbook.yml`:
+2. Run the role's test playbook:
    ```bash
    ansible-playbook -i inventory/hosts.yml test_playbook.yml
    ```
+3. Observe the output to confirm whether the role test passed or failed. For detailed logs, refer to the output in your terminal.
 
 ---
 
