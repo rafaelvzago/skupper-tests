@@ -16,7 +16,7 @@ skupper_site_manifest_template: "collections/ansible_collections/rhsiqe/skupper/
 # Connector-specific configuration
 expose_connector_routing_key: custom-backend  # Routing key for the connector, e.g., "custom-backend"
 expose_connector_metadata_name: custom-backend  # Metadata name for the connector, e.g., "custom-backend"
-expose_connector_port: 9090  # Port for the connector, e.g., 9090
+expose_connector_port: 8080  # Port for the connector, e.g., 9090
 expose_connector_selector: app=custom-backend  # Selector for the connector, e.g., "app=custom-backend"
 
 # Installation configuration for Skupper
