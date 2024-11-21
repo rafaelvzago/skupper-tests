@@ -22,7 +22,8 @@ ROLE_ORDER=(
   "skupper_site"
   "expose_connector"
   "consume_service"
-  "teardown_namespaces"  # Teardown should be the last role to run
+  "access_grant"
+  "teardown_namespaces"
 )
 
 # Function to calculate the number of dots needed
