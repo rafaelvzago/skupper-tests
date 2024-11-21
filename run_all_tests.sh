@@ -19,6 +19,7 @@ ROLE_ORDER=(
   "generate_namespaces"
   "deploy_workload"
   "install_skupper"
+  "install_skupper_controller"
   "skupper_site"
   "expose_connector"
   "consume_service"
