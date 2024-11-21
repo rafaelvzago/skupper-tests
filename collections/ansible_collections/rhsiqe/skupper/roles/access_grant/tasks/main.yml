@@ -1,0 +1,48 @@
+---
+# Tasks file for access_grant
+
+- name: Setting namespace name with prefix
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Remove AccessGrant manifest if it exists
+  ansible.builtin.file:
+    state: absent
+    path: "/tmp/access-grant-{{ inventory_hostname }}.yml"
+  failed_when: false
+
+- name: Render AccessGrant manifest from template
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ access_grant_template }}"
+    dest: "/tmp/access-grant-{{ inventory_hostname }}.yml"
+    mode: '0644'
+
+- name: Apply AccessGrant manifest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ access_grant_state }}"
+    src: "/tmp/access-grant-{{ inventory_hostname }}.yml"
+  register: access_grant_results
+
+- name: Debug applied results
+  ansible.builtin.debug:
+    var: access_grant_results
+
+- name: Wait until AccessGrant is ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: AccessGrant
+    api_version: skupper.io/v2alpha1
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    name: "{{ access_grant_name }}"
+  register: access_grant_info
+  until: >
+    access_grant_info.resources[0].status.conditions |
+    selectattr('type', 'equalto', 'Ready') |
+    map(attribute='status') |
+    select('equalto', 'True') |
+    list |
+    length > 0
+  retries: 10
+  delay: 10
