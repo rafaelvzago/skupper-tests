@@ -27,3 +27,10 @@ consume_service_port: 8080
 consume_service_host: "backend"
 consume_service_manifest_template: "listener.yml.j2"
 consume_service_state: present
+
+# Access grant configuration
+access_grant_name: my-grant
+access_grant_redemptions_allowed: 10
+access_grant_expiration_window: 1h
+access_grant_state: present
+access_grant_template: access-grant.yml.j2

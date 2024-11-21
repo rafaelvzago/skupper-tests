@@ -41,6 +41,13 @@
         # Only when the namespace has west in the inventory_hostname
         - "'west' in inventory_hostname"
 
+    - name: Granting access to the frontend (west) site
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.access_grant
+      when:
+        # Only when the namespace has west in the inventory_hostname
+        - "'west' in inventory_hostname"
+
     - name: Deleting namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_namespaces
