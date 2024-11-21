@@ -1,0 +1,7 @@
+apiVersion: skupper.io/v2alpha1
+kind: AccessGrant
+metadata:
+  name: {{ access_grant_name }}
+spec:
+  redemptionsAllowed: {{ access_grant_redemptions_allowed }}
+  expirationWindow: "{{ access_grant_expiration_window }}"
