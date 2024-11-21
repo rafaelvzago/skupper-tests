@@ -23,6 +23,12 @@
       when:
         - not skip_skupper_install | default(false) | bool
 
+    - name: Installing Skupper Controller
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.install_skupper_controller
+      when:
+        - not skip_skupper_controller_install | default(false) | bool
+
     - name: Creating Skupper sites
       ansible.builtin.include_role:
         name: rhsiqe.skupper.skupper_site
