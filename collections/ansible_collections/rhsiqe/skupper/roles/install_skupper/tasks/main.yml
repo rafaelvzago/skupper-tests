@@ -37,14 +37,6 @@
     label: "{{ item.path }}"
   failed_when: false
 
-- name: Install the Skupper Controller
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    state: present
-    src: "{{ install_skupper_skupper_controller_manifest }}"
-  register: skupper_controller_results
-  failed_when: false
-
 - name: Clean up Skupper repository directory
   ansible.builtin.file:
     path: "{{ skupper_folder }}"
