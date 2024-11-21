@@ -1,0 +1,3 @@
+---
+# defaults file for collections/ansible_collections/rhsiqe/skupper/roles/install_skupper_controller
+install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
