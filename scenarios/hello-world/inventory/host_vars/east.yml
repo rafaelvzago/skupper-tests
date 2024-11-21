@@ -8,6 +8,7 @@ namespace_name: hello-world-east
 # Deployment configuration for workload
 deploy_workload_workload_image: quay.io/skupper/hello-world-backend:latest
 deploy_workload_deployment_name: "backend"
+deploy_workload_replicas: 3
 
 # Skupper site configuration
 skupper_site_include_spec: false  # Do not include the `spec` section for the east site
