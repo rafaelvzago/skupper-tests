@@ -12,7 +12,7 @@ deploy_workload_replicas: 3
 
 # Skupper site configuration
 skupper_site_include_spec: false  # Do not include the `spec` section for the east site
-skupper_site_manifest_template: "collections/ansible_collections/rhsiqe/skupper/roles/skupper_site/templates/skupper-site.yml.j2"
+skupper_site_manifest_template: "skupper-site.yml.j2"
 
 # Connector-specific configuration
 expose_connector_routing_key: custom-backend  # Routing key for the connector, e.g., "custom-backend"
@@ -25,3 +25,6 @@ install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.g
 install_skupper_skupper_branch: 'v2'
 install_skupper_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
 install_skupper_skupper_release_name: skupper-setup
+
+# Installation of skupeer controller
+install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
