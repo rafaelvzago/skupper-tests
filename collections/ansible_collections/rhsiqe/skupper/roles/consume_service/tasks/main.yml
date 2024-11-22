@@ -3,7 +3,7 @@
 
 - name: Set manifest file path
   ansible.builtin.set_fact:
-    consume_service_file: "/tmp/consume-service-{{ inventory_hostname }}.yml"
+    consume_service_file: "{{ consume_service_output_path }}/consume-service-{{ inventory_hostname }}.yml"
     consume_service_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
 
 - name: Delete Listener manifest if it exists

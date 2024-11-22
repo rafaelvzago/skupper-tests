@@ -6,3 +6,4 @@ consume_service_port: 8080                      # Default port
 consume_service_host: "backend"                 # Default host
 consume_service_manifest_template: "listener.yml.j2"  # Jinja2 template for Listener
 consume_service_state: present                  # Desired state (e.g., present or absent)
+consume_service_output_path: ""                 # Path to write the manifest file

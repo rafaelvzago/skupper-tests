@@ -6,3 +6,4 @@ skupper_site_state: present  # Desired state of the resources (e.g., present, ab
 skupper_site_manifest_template: skupper-site.yml.j2  # Template for the Skupper site manifest
 skupper_site_include_spec: true  # Whether to include the `spec` section in the manifest
 skupper_site_link_access: default  # Default value for `linkAccess` in the spec
+skupper_site_output_path: ""  # Path to write the generated manifest

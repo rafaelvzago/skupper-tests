@@ -3,7 +3,7 @@
 
 - name: Set manifest file path
   ansible.builtin.set_fact:
-    expose_connector_file: "/tmp/connector-{{ inventory_hostname }}.yml"
+    expose_connector_file: "{{ expose_connector_output_path }}/connector-{{ inventory_hostname }}.yml"
     expose_connector_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
 
 - name: Delete existing connector manifest if present

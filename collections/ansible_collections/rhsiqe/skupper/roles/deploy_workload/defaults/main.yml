@@ -2,3 +2,4 @@
 deploy_workload_namespace_name: default
 deploy_workload_deployment_name: "app"
 deploy_workload_replicas: 1
+deploy_workload_output_path: "" # Must be set in the playbook or inventory

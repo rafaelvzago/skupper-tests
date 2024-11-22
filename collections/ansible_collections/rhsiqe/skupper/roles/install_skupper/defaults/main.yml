@@ -2,3 +2,4 @@
 install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git'
 install_skupper_skupper_branch: 'v2'
 install_skupper_skupper_release_name: skupper-setup
+install_skupper_install_output_path: "" # Must be set in the playbook or inventory

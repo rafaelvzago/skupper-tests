@@ -3,7 +3,7 @@
 
 - name: Set manifest file path
   ansible.builtin.set_fact:
-    skupper_site_file: "/tmp/skupper-site-{{ inventory_hostname }}.yml"
+    skupper_site_file: "{{ skupper_site_output_path }}/skupper-site-{{ inventory_hostname }}.yml"
     skupper_site_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
 
 - name: Delete Skupper site manifest if it exists
