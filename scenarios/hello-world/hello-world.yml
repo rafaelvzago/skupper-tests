@@ -32,7 +32,7 @@
       when:
         - not skip_skupper_install | default(false) | bool
       vars:
-        skupper_install_output_path: "{{ temp_dir_path }}"
+        install_skupper_install_output_path: "{{ temp_dir_path }}"
 
     - name: Deploying backend and frontend
       ansible.builtin.include_role:
