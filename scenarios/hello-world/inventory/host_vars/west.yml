@@ -18,7 +18,7 @@ deploy_workload_output_path: "" # Must be set in the playbook or inventory
 
 # Skupper site configuration
 skupper_site_include_spec: true
-skupper_site_link_access: rocket
+skupper_site_link_access: default
 skupper_site_manifest_template: "skupper-site.yml.j2"
 skupper_site_output_path: "" # Must be set in the playbook or inventory
 
