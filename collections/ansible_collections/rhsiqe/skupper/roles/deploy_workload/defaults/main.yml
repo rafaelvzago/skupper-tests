@@ -1,5 +1,5 @@
 # roles/deploy_workload/defaults/main.yml
-deploy_workload_namespace_name: default
-deploy_workload_deployment_name: "app"
-deploy_workload_replicas: 1
-deploy_workload_output_path: "" # Must be set in the playbook or inventory
+deploy_workload_namespace_name: default       # Namespace where the workload will be deployed
+deploy_workload_deployment_name: "app"        # Name of the deployment
+deploy_workload_replicas: 1                   # Number of replicas
+deploy_workload_output_path: "/tmp/localhost" # Must be set in the playbook or inventory

@@ -8,13 +8,10 @@
 - name: Creating AccessGrant manifest file path
   ansible.builtin.set_fact:
     access_grant_file: "{{ access_grant_output_path }}/access-grant-{{ inventory_hostname }}.yml"
-    access_token_file: "{{ access_grant_output_path }}/access-token-{{ inventory_hostname }}.yml"
 
-- name: Remove AccessGrant manifest if it exists
-  ansible.builtin.file:
-    state: absent
-    path: "{{ access_grant_file }}"
-  failed_when: false
+- name: Creating AccessGrant token manifest file path
+  ansible.builtin.set_fact:
+    access_token_file: "{{ access_grant_output_path }}/access-token-{{ inventory_hostname }}.yml"
 
 - name: Render AccessGrant manifest from template
   ansible.builtin.template:

@@ -6,12 +6,6 @@
     skupper_site_file: "{{ skupper_site_output_path }}/skupper-site-{{ inventory_hostname }}.yml"
     skupper_site_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
 
-- name: Delete Skupper site manifest if it exists
-  ansible.builtin.file:
-    path: "{{ skupper_site_file }}"
-    state: absent
-  failed_when: false
-
 - name: Render Skupper site manifest from template
   ansible.builtin.template:
     src: "{{ role_path }}/templates/skupper-site.yml.j2"
