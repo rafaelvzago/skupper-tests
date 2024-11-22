@@ -9,3 +9,8 @@ build:
 	ansible-galaxy collection install -f $(TAR_PATH) --force && \
 	cd $(ROOT_PATH)
 	rm -rf $(COLLECTION_PATH)/$(TAR_NAME)
+	
+test:
+	@KUBECONFIG=$$HOME/.kube/config kubectl delete namespace test-skupper || true
+	@rm -rf /tmp/localhost
+	@./run_all_tests.sh
