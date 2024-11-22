@@ -1,23 +1,26 @@
 ---
 # Kubeconfig path for west site
-kubeconfig: /home/rzago/.kube/ocp-minikube
+kubeconfig: /home/rzago/.kube/k3s-config
 
 # Namespace configuration
 namespace_name: hello-world-west
-
-# Deployment configuration for workload
-deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
-deploy_workload_deployment_name: "frontend"
-
-# Skupper site configuration
-skupper_site_include_spec: true
-skupper_site_link_access: allow
-skupper_site_manifest_template: "collections/ansible_collections/rhsiqe/skupper/roles/skupper_site/templates/skupper-site.yml.j2"
 
 # Installation configuration for Skupper
 install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git'
 install_skupper_skupper_branch: 'v2'
 install_skupper_skupper_release_name: skupper-setup
+install_skupper_install_output_path: ""
+
+# Deployment configuration for workload
+deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
+deploy_workload_deployment_name: "frontend"
+deploy_workload_output_path: "" # Must be set in the playbook or inventory
+
+# Skupper site configuration
+skupper_site_include_spec: true
+skupper_site_link_access: default
+skupper_site_manifest_template: "skupper-site.yml.j2"
+skupper_site_output_path: "" # Must be set in the playbook or inventory
 
 # Installation of skupeer controller
 install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
@@ -29,9 +32,13 @@ consume_service_port: 8080
 consume_service_host: "backend"
 consume_service_manifest_template: "listener.yml.j2"
 consume_service_state: present
+consume_service_output_path: "" # Must be set in the playbook or inventory
 
-waccess_grant_name: my-grant
+# Access grant configuration
+access_grant_name: my-grant
 access_grant_redemptions_allowed: 10
 access_grant_expiration_window: 1h
 access_grant_state: present
 access_grant_template: access-grant.yml.j2
+access_grant_token_template: "access_token.yml.j2"
+access_grant_output_path: "" # Must be set in the playbook or inventory
