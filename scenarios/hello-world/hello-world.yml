@@ -2,6 +2,7 @@
   hosts: all
   vars:
     namespace_prefix: zago
+    site_access_token_path: ""
 
   tasks:
     - name: Set a unique temporary directory path per host
@@ -75,6 +76,12 @@
         - "'west' in inventory_hostname"
       vars:
         access_grant_output_path: "{{ temp_dir_path }}"
+
+    - name: Linking east site to west site
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.link_site
+      when:
+        - "'east' in inventory_hostname"
 
     - name: Deleting namespaces
       ansible.builtin.include_role:
