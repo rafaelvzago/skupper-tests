@@ -1,0 +1,3 @@
+---
+# Kubeconfig path for east site
+kubeconfig: /home/rzago/.kube/config

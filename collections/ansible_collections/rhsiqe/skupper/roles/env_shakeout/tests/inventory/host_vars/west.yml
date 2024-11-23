@@ -1,0 +1,4 @@
+---
+# Kubeconfig path for west site
+kubeconfig: /home/rzago/.kube/config
+
