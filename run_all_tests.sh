@@ -23,7 +23,8 @@ ROLE_ORDER=(
   "skupper_site"
   "expose_connector"
   "consume_service"
-  "access_grant"
+#  "access_grant"
+#  "link_sites
   "teardown_namespaces"
 )
 
