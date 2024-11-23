@@ -4,6 +4,7 @@
 - name: Setting namespace name with prefix
   ansible.builtin.set_fact:
     namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    access_token: "/tmp/{{ namespace_prefix }}-access-token.yml"
 
 - name: Creating AccessGrant manifest file path
   ansible.builtin.set_fact:
@@ -40,13 +41,32 @@
     name: "{{ access_grant_name }}"
   register: access_grant_info
   until: >
-    access_grant_info.resources[0].status.conditions |
-    selectattr('type', 'equalto', 'Ready') |
-    map(attribute='status') |
-    select('equalto', 'True') |
-    list |
-    length > 0
+    access_grant_info.resources | length > 0 and
+    access_grant_info.resources[0].status is defined and
+    access_grant_info.resources[0].status.conditions is defined and
+    (access_grant_info.resources[0].status.conditions |
+     selectattr('type', 'equalto', 'Ready') |
+     selectattr('status', 'equalto', 'True') |
+     list |
+     length) > 0
   retries: 10
+  delay: 10
+
+- name: Wait for Skupper router pods to be ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ namespace }}"
+  register: skupper_pods
+
+- name: Wait for all pods in the namespace to be in Running state
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ skupper_site_namespace }}"
+  register: skupper_pods
+  until: skupper_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == skupper_pods.resources | length
+  retries: 30
   delay: 10
 
 - name: Extract AccessGrant details
@@ -66,4 +86,10 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ access_grant_token_template }}"
     dest: "{{ access_token_file }}"
+    mode: '0644'
+
+- name: Copying AccessToken to /tmp
+  ansible.builtin.copy:
+    src: "{{ access_token_file }}"
+    dest: "{{ access_token }}"
     mode: '0644'
