@@ -1,0 +1,19 @@
+---
+# Tasks for the link_site role
+- name: Setting namespace name with prefix
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    skupper_site_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    access_token: "/tmp/{{ namespace_prefix }}-access-token.yml"
+
+- name: Apply AccessToken in target namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    src: "{{ access_token }}"
+    state: present
+  register: apply_accesstoken
+
+- name: Debug application result
+  ansible.builtin.debug:
+    var: apply_accesstoken
