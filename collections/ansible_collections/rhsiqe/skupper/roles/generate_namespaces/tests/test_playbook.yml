@@ -9,5 +9,5 @@
 
     - name: Include role to delete test artifacts
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.teardown_namespaces
+        name: rhsiqe.skupper.teardown_test
       register: teardown_result
