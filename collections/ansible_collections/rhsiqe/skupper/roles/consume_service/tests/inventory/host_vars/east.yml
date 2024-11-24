@@ -1,6 +1,6 @@
 ---
 # Kubeconfig path for east site
-kubeconfig: /home/rzago/.kube/config
+kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
 
 # Namespace configuration
 namespace_name: hello-world-east
