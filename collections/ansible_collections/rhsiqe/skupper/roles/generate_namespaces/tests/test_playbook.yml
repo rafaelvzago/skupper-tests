@@ -5,7 +5,7 @@
     - name: Include the role to generate the namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.generate_namespaces
-      register: shakeout_result
+      register: generate_namespaces_result
 
     - name: Include role to delete test artifacts
       ansible.builtin.include_role:
