@@ -1,7 +1,0 @@
----
-- name: Test deploy_workload role
-  hosts: all
-  tasks:
-    - name: Calling the role to check the environment
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.teardown_namespaces

@@ -1,0 +1,10 @@
+---
+# Kubeconfig path for west site
+kubeconfig: /home/rzago/.kube/config
+
+# Namespace configuration
+namespace_name: hello-world-west
+
+# Deployment configuration for workload
+deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
+deploy_workload_deployment_name: "frontend"
