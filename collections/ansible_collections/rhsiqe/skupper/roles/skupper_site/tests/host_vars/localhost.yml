@@ -1,7 +1,0 @@
----
-kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config"
-namespace_prefix: test
-namespace_name: skupper
-deploy_workload_deployment_name: nginx
-deploy_workload_replicas: 2
-deploy_workload_workload_image: nginx:latest
