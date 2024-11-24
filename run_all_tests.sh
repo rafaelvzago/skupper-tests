@@ -7,11 +7,11 @@ echo "Running role tests in specified order..."
 
 RESULTS_DIR="test_results"
 ROLES_DIR="$PWD/collections/ansible_collections/rhsiqe/skupper/roles"
-LOG_FILE="test_run.log"
-LINE_LENGTH=60  # Length of the line for the dots
+LOG_FILE="$RESULTS_DIR/$(date +%Y%m%d%H%M)_test.log"
+STATUS_COLUMN=60  # Column where the status will start
 
 # Create directory to store test results
-mkdir -p $RESULTS_DIR
+mkdir -p "$RESULTS_DIR"
 
 # Define the order of roles to test, with teardown last
 ROLE_ORDER=(
@@ -23,42 +23,59 @@ ROLE_ORDER=(
   "skupper_site"
   "expose_connector"
   "consume_service"
-#  "access_grant"
-#  "link_sites
-  "teardown_namespaces"
+  "access_grant"
+  "link_site"
 )
 
 # Function to calculate the number of dots needed
 add_dots() {
-  local text=$1
-  local dots_count=$((LINE_LENGTH - ${#text} - 10))  # Reserve space for status
-  printf "%s" "$text"
-  for ((i = 0; i < dots_count; i++)); do
-    printf "."
-  done
+  local text="$1"
+  local status="$2"
+  local time_info="$3"
+  local text_length=${#text}
+  local dots_count=$((STATUS_COLUMN - text_length))
+  if (( dots_count < 0 )); then dots_count=0; fi
+  local dots
+  dots=$(printf '%*s' "$dots_count" '' | tr ' ' '.')
+  printf "%s%s%s%s\n" "$text" "$dots" "$status" "$time_info"
 }
 
 # Function to run a role's test
 run_role_test() {
-  local role=$1
+  local role="$1"
   local test_dir="$ROLES_DIR/$role/tests"
   local playbook="$test_dir/test_playbook.yml"
   local inventory="$test_dir/inventory/hosts.yml"
 
   if [[ -f "$playbook" && -d "$test_dir/inventory" ]]; then
-    add_dots "$role"
+    # Start timer
+    local start_time
+    start_time=$(date +%s)
 
-    # Redirect full output to the log file, and only show the simplified result
+    # Run the ansible playbook and redirect output
     if ansible-playbook -i "$inventory" "$playbook" >> "$LOG_FILE" 2>&1; then
-      echo " [PASSED]"
+      # End timer
+      local end_time
+      end_time=$(date +%s)
+      local elapsed_time=$((end_time - start_time))
+      local status=" [PASSED]"
+      local time_info=" [${elapsed_time}s]"
+      add_dots "$role" "$status" "$time_info"
     else
-      echo " [FAILED]"
+      # End timer
+      local end_time
+      end_time=$(date +%s)
+      local elapsed_time=$((end_time - start_time))
+      local status=" [FAILED]"
+      local time_info=" [${elapsed_time}s]"
+      add_dots "$role" "$status" "$time_info"
       tail -n 10 "$LOG_FILE"  # Show last 10 lines of the log for debugging
       exit 1
     fi
   else
-    add_dots "$role"
-    echo " [SKIPPED] (No test_playbook.yml or inventory found)"
+    local status=" [SKIPPED]"
+    local time_info=" (No test_playbook.yml or inventory found)"
+    add_dots "$role" "$status" "$time_info"
   fi
 }
 
