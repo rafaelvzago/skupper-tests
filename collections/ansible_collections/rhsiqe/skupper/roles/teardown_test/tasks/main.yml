@@ -1,12 +1,22 @@
 ---
 # roles/teardown_test/tasks/main.yml
-- name: Deletiing test namespace
+- name: Deleting test namespace
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: absent
     kind: Namespace
     name: "{{ namespace_prefix }}-{{ namespace_name }}"
   register: namespace
+
+- name: Waiting for namespace deletion
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Namespace
+    name: "{{ namespace_prefix }}-{{ namespace_name }}"
+  register: namespace_info
+  until: namespace_info.resources | length == 0
+  retries: 20
+  delay: 2
 
 - name: Deleting test temporary directory
   ansible.builtin.file:
@@ -17,5 +27,5 @@
   ansible.builtin.debug:
     msg: |
       Cleanup Summary:
-      - Namespace: {{ namespace.result.metadata.labels['kubernetes.io/metadata.name'] }}
+      - Namespace: {{ namespace.result.metadata.name if namespace.result is defined else 'N/A' }}
       - Temporary Directory: {{ teardown_test_temp_dir_path }}
