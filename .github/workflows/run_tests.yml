@@ -49,6 +49,12 @@ jobs:
           minikube start --driver=docker --cpus 2 --memory 2048
           minikube kubectl -- get pods -A
 
+      # **Run Minikube Tunnel**
+      - name: Run Minikube Tunnel
+        run: |
+          sudo nohup minikube tunnel --cleanup &> tunnel.log &
+          sleep 5  # Wait for the tunnel to establish
+
       # Install Ansible Collection
       - name: Install Collection from requirements.yml
         run: |
