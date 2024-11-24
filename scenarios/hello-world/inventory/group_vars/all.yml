@@ -1,6 +1,6 @@
 ---
 ansible_connection: local
 ansible_user: rzago
-common_images:
-  curl-image: quay.io/rzago/curl-telnet
 debug: false
+namespace_prefix: zago
+site_access_token_path: ""

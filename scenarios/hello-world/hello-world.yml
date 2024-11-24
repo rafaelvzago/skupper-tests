@@ -1,9 +1,5 @@
 - name: Hello World test playbook
   hosts: all
-  vars:
-    namespace_prefix: zago
-    site_access_token_path: ""
-
   tasks:
     - name: Set a unique temporary directory path per host
       ansible.builtin.set_fact:
@@ -35,17 +31,17 @@
       vars:
         install_skupper_install_output_path: "{{ temp_dir_path }}"
 
-    - name: Deploying backend and frontend
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.deploy_workload
-      vars:
-        deploy_workload_output_path: "{{ temp_dir_path }}"
-
     - name: Installing Skupper Controller
       ansible.builtin.include_role:
         name: rhsiqe.skupper.install_skupper_controller
       when:
         - not skip_skupper_controller_install | default(false) | bool
+
+    - name: Deploying backend and frontend
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.deploy_workload
+      vars:
+        deploy_workload_output_path: "{{ temp_dir_path }}"
 
     - name: Creating Skupper sites
       ansible.builtin.include_role:
@@ -83,8 +79,8 @@
       when:
         - "'east' in inventory_hostname"
 
-    - name: Deleting namespaces
+    - name: Deleting the test resources
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.teardown_namespaces
+        name: rhsiqe.skupper.teardown_tests
       when:
         - not skip_teardown | default(false) | bool
