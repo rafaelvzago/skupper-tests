@@ -24,7 +24,7 @@ skupper_site_include_spec: false  # Do not include the `spec` section for the ea
 skupper_site_manifest_template: "skupper-site.yml.j2"
 skupper_site_output_path: "" # Must be set in the playbook or inventory
 
-# defaults file for expose_connector
+# Expose connector configuration
 expose_connector_routing_key: backend  # The routing key to use
 expose_connector_metadata_name: backend  # Metadata name for the connector
 expose_connector_port: 8080  # Port for the connector
