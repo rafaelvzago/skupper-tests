@@ -1,74 +1,74 @@
 # Role: link_site
 
-This Ansible role applies an AccessToken in a specified Kubernetes namespace, enabling secure communication between Skupper sites. It dynamically generates the namespace name using a prefix and base name, then applies the AccessToken from a given manifest path.
+The `link_site` Ansible role establishes a connection between Skupper sites by applying an `AccessToken` to the target Kubernetes namespace. This enables inter-site communication in a Skupper topology.
 
 ## Tasks
 
-- **Set Namespace Name:**
-  - Constructs the namespace name and related variables using a provided prefix and base name.
+- **Set Namespace and Token Path:**
+  - Determines the namespace and sets the path to the `AccessToken` manifest file.
 - **Apply AccessToken:**
-  - Applies the AccessToken manifest to the target namespace using the `kubernetes.core.k8s` module.
-- **Debug Results:**
-  - Outputs the result of the AccessToken application for verification.
+  - Uses the `kubernetes.core.k8s` module to apply the `AccessToken` in the target namespace.
+- **Debug Application Result:**
+  - Outputs the results of the applied `AccessToken` for verification.
 
 ## Requirements
 
 - Ansible 2.1 or newer
 - `kubernetes.core` collection installed on the control node
 - Kubernetes cluster accessible via `kubeconfig`
+- A valid `AccessToken` manifest available at the specified path
 
 ## Role Variables
 
-The following variables can be configured:
-
-### Defaults (from `defaults/main.yml`)
-
-- `link_site_access_token_name`: Name of the AccessToken. Default is `"access-token"`.
-- `link_site_target_namespace`: Target namespace for the AccessToken. Default is `"default"`.
-- `link_site_access_token_path`: Path to the AccessToken manifest file. Default is empty (`""`).
-
-### Additional Variables
-
-- `namespace_prefix`: Prefix for the namespace (set in the playbook or inventory).
-- `namespace_name`: Base name for the namespace (set in the inventory).
-- `kubeconfig`: Path to the kubeconfig file for accessing the Kubernetes cluster.
+| Variable                   | Default Value          | Description                                                                 |
+|----------------------------|------------------------|-----------------------------------------------------------------------------|
+| `link_site_access_token_name` | `access-token`        | Name of the `AccessToken` resource.                                         |
+| `link_site_target_namespace`  | `default`             | Target namespace where the `AccessToken` will be applied.                  |
+| `link_site_access_token_path` |                      | Path to the `AccessToken` manifest. **Must be defined in playbook/inventory.** |
+| `namespace_prefix`          |                        | Prefix for the namespace.                                                  |
+| `namespace_name`            |                        | Name of the namespace.                                                     |
+| `kubeconfig`                |                        | Path to the kubeconfig file for accessing the Kubernetes cluster. **Mandatory.** |
 
 ## Example Usage
-
-Define the required variables in your playbook and inventory to configure the role:
 
 ### Playbook
 
 ```yaml
 - hosts: all
   tasks:
-    - name: Link a site using AccessToken
+    - name: Link Skupper sites
       ansible.builtin.include_role:
         name: rhsiqe.skupper.link_site
       vars:
         namespace_prefix: "skupper"
-        link_site_access_token_path: "/path/to/access-token.yml"
+        namespace_name: "east"
+        link_site_access_token_path: "/path/to/east-access-token.yml"
 ```
 
 ### Inventory (host_vars)
 
+#### `east.yml`
+
 ```yaml
-# host_vars for target host
-kubeconfig: /path/to/kubeconfig
-namespace_name: site-east
+kubeconfig: /path/to/east/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "east"
+```
+
+#### `west.yml`
+
+```yaml
+kubeconfig: /path/to/west/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "west"
 ```
 
 ## Notes
 
-- The namespace is generated in the format `<namespace_prefix>-<namespace_name>`. For example, with `namespace_prefix: skupper` and `namespace_name: site-east`, the resulting namespace will be `skupper-site-east`.
-- Ensure that the AccessToken manifest exists at the path specified in `link_site_access_token_path`.
-- The `kubernetes.core.k8s` module is used for declarative application of Kubernetes resources, ensuring robust and consistent operations.
-- This role requires the `kubeconfig` variable to be correctly set in the inventory for each target host to access the Kubernetes cluster.
-
-## Testing
-
-The role includes a test playbook located in `tests/test_playbook.yml`, along with sample inventory and variable files for testing. Adjust the test configurations as needed to match your environment. 
+- The namespace is derived as `<namespace_prefix>-<namespace_name>`.
+- Ensure the `link_site_access_token_path` variable is defined and points to a valid `AccessToken` manifest.
+- The role uses the `kubernetes.core.k8s` module, which requires the `kubernetes.core` collection to be installed.
 
 ## License
 
-This role is licensed under the Apache License 2.0.
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

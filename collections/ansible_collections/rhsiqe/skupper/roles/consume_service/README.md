@@ -1,49 +1,37 @@
 # Role: consume_service
 
-The `consume_service` Ansible role creates and manages a Skupper `Listener` resource to enable services to consume messages using a specified configuration. It uses a Jinja2 template to generate the Listener manifest and applies it to the Kubernetes cluster.
+This Ansible role automates the creation and management of `Listener` resources in a Kubernetes cluster using the Skupper API. It generates a manifest for the `Listener` resource from a template, applies it to the target namespace, and verifies the results.
 
 ## Tasks
 
-- **Set Manifest Path:**
-  - Configures the file path for the Listener manifest and determines the namespace for deployment.
-- **Delete Existing Manifest:**
-  - Ensures any pre-existing Listener manifest file is removed.
-- **Render Listener Manifest:**
-  - Generates a Listener manifest from the provided Jinja2 template with role variables.
-- **Apply Manifest:**
-  - Applies the generated manifest to the Kubernetes cluster.
-- **Debug Results:**
-  - Outputs details of the applied Listener resource for debugging purposes.
+- **Generate Listener Manifest:**
+  - Creates a Kubernetes manifest for the `Listener` resource using a Jinja2 template.
+- **Apply Manifest to Kubernetes Cluster:**
+  - Uses the `kubernetes.core.k8s` module to apply the manifest in the specified namespace.
+- **Debug Applied Results:**
+  - Outputs the results of the applied Listener for verification.
 
 ## Requirements
 
-- Ansible 2.9 or newer
+- Ansible 2.1 or newer
 - `kubernetes.core` collection installed on the control node
 - Kubernetes cluster accessible via `kubeconfig`
-- Skupper operator installed and running in the target namespace
+- Skupper installed and configured in the target namespaces
 
 ## Role Variables
 
-### Default Variables
-The following variables can be overridden in your playbooks or inventory:
-
-| Variable                       | Default Value         | Description                                        |
-|--------------------------------|-----------------------|----------------------------------------------------|
-| `consume_service_metadata_name` | `backend`             | Metadata name for the Listener resource.           |
-| `consume_service_routing_key`   | `backend`             | Routing key for the Listener.                      |
-| `consume_service_port`          | `8080`               | Port for the Listener to bind to.                  |
-| `consume_service_host`          | `backend`            | Host address for the Listener.                     |
-| `consume_service_manifest_template` | `listener.yml.j2` | Template for rendering the Listener manifest.      |
-| `consume_service_state`         | `present`            | Desired state of the Listener resource (`present` or `absent`). |
-
-### Inventory Variables
-These variables should be set at the inventory level:
-
-| Variable         | Description                                          |
-|------------------|------------------------------------------------------|
-| `namespace_prefix` | Prefix for the namespace where the Listener is deployed. |
-| `namespace_name`   | Base name for the namespace.                       |
-| `kubeconfig`       | Path to the kubeconfig file for cluster access.    |
+| Variable                             | Default Value                 | Description                                                                 |
+|--------------------------------------|-------------------------------|-----------------------------------------------------------------------------|
+| `consume_service_metadata_name`      | `backend`                     | Name of the `Listener` resource.                                            |
+| `consume_service_routing_key`        | `backend`                     | Routing key for the `Listener`.                                             |
+| `consume_service_port`               | `8080`                        | Port on which the service listens.                                          |
+| `consume_service_host`               | `backend`                     | Hostname or service backend.                                                |
+| `consume_service_manifest_template`  | `listener.yml.j2`             | Jinja2 template for generating the `Listener` manifest.                     |
+| `consume_service_state`              | `present`                     | Desired state of the `Listener` resource (`present` or `absent`).           |
+| `consume_service_output_path`        | `/tmp/localhost`              | Directory where the generated manifest files are stored.                    |
+| `namespace_prefix`                   |                               | Prefix for the Kubernetes namespace.                                        |
+| `namespace_name`                     |                               | Name of the Kubernetes namespace.                                           |
+| `kubeconfig`                         |                               | Path to the kubeconfig file for cluster access.                             |
 
 ## Example Usage
 
@@ -52,43 +40,42 @@ These variables should be set at the inventory level:
 ```yaml
 - hosts: all
   tasks:
-    - name: Include consume_service role
+    - name: Include the consume_service role
       ansible.builtin.include_role:
         name: rhsiqe.skupper.consume_service
       vars:
-        consume_service_metadata_name: "custom-backend"
-        consume_service_routing_key: "custom-key"
+        namespace_prefix: "skupper"
+        namespace_name: "east"
+        consume_service_metadata_name: "frontend"
+        consume_service_routing_key: "frontend"
         consume_service_port: 9090
+        consume_service_host: "frontend-service"
 ```
 
 ### Inventory (host_vars)
 
+#### `east.yml`
+
 ```yaml
-# host_vars for target host
-namespace_prefix: "demo"
-namespace_name: "app"
-kubeconfig: "/path/to/kubeconfig"
+kubeconfig: /path/to/east/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "east"
 ```
 
-### Rendered Listener Manifest (Example)
+#### `west.yml`
 
 ```yaml
-apiVersion: skupper.io/v2alpha1
-kind: Listener
-metadata:
-  name: custom-backend
-spec:
-  routingKey: custom-key
-  port: 9090
-  host: backend
+kubeconfig: /path/to/west/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "west"
 ```
 
 ## Notes
 
-- The namespace for the Listener is constructed as `<namespace_prefix>-<namespace_name>`.
-- Ensure the Skupper operator is installed and functional in the target namespace.
-- The `kubernetes.core.k8s` module is used to manage the Listener resource declaratively.
+- The namespace is derived as `<namespace_prefix>-<namespace_name>`.
+- Generated manifests are stored in the `consume_service_output_path` directory, named according to the inventory host.
+- Ensure the `kubernetes.core` collection is installed to use the `kubernetes.core.k8s` module.
 
 ## License
 
-Apache License, Version 2.0
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

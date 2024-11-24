@@ -1,14 +1,13 @@
-
 # Role: generate_namespaces
 
-This Ansible role creates a Kubernetes namespace using a specified prefix and namespace name. The prefix is defined when calling the role, and the namespace name is specified in the inventory. The role outputs the created namespace details for verification.
+This Ansible role creates Kubernetes namespaces using a specified prefix and name. It ensures the namespace is created in the target cluster and displays its details for verification.
 
 ## Tasks
 
 - **Create Namespace:**
-  - Creates a Kubernetes namespace using the specified prefix and namespace name.
+  - Uses the `kubernetes.core.k8s` module to create a Kubernetes namespace with the specified name.
 - **Display Namespace Details:**
-  - Outputs the details of the created namespace.
+  - Outputs the name of the created namespace for confirmation.
 
 ## Requirements
 
@@ -18,38 +17,51 @@ This Ansible role creates a Kubernetes namespace using a specified prefix and na
 
 ## Role Variables
 
-- **Role Variables:**
-  - `generate_namespaces_prefix`: Specifies the prefix for the namespace. This is passed directly when including the role.
-- **Inventory Variables:**
-  - `generate_namespaces_namespace_name`: Specifies the base name for the namespace (e.g., `hello-world-east` or `hello-world-west`). This should be defined in the inventory at the host level.
-  - `kubeconfig`: Specifies the path to the kubeconfig file for connecting to the cluster. This should also be set in the inventory.
+| Variable           | Description                                                                     |
+|--------------------|---------------------------------------------------------------------------------|
+| `namespace_prefix` | Prefix for the namespace.                                                      |
+| `namespace_name`   | Base name for the namespace.                                                   |
+| `kubeconfig`       | Path to the kubeconfig file for accessing the cluster. **Mandatory.**          |
 
 ## Example Usage
-
-Define the prefix when calling the role in your playbook, and specify the namespace name in the inventory:
 
 ### Playbook
 
 ```yaml
 - hosts: all
   tasks:
-    - name: Calling the role to generate the namespaces
+    - name: Generate namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.generate_namespaces
       vars:
-        generate_namespaces_prefix: zago
+        namespace_prefix: "skupper"
+        namespace_name: "east"
 ```
 
 ### Inventory (host_vars)
 
+#### `east.yml`
+
 ```yaml
-# host_vars for target host
 kubeconfig: /path/to/east/kubeconfig
-generate_namespaces_namespace_name: hello-world-east
+namespace_prefix: "skupper"
+namespace_name: "east"
+```
+
+#### `west.yml`
+
+```yaml
+kubeconfig: /path/to/west/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "west"
 ```
 
 ## Notes
 
-- The namespaces created will be in the format: `<prefix>-<namespace_name>`, combining `generate_namespaces_prefix` and `generate_namespaces_namespace_name`.
-- Ensure that `kubeconfig` and `generate_namespaces_namespace_name` are defined at the inventory level for each target host.
-- This role uses the `kubernetes.core.k8s` module to create and manage Kubernetes resources directly, which provides a more reliable and declarative approach than shell commands like `kubectl`.
+- The namespace is created as `<namespace_prefix>-<namespace_name>`.
+- Ensure the `kubernetes.core.k8s` module is installed to use this role.
+- The task outputs the namespace details for verification.
+
+## License
+
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

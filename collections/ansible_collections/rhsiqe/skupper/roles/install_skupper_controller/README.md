@@ -1,11 +1,11 @@
 # Role: install_skupper_controller
 
-This Ansible role deploys the Skupper Controller to a Kubernetes cluster. The controller manifest is downloaded from a specified URL and applied to the cluster using the provided kubeconfig.
+This Ansible role installs the Skupper Controller in a Kubernetes cluster by applying a pre-defined manifest file. The controller is a critical component for managing Skupper resources in a cluster.
 
 ## Tasks
 
 - **Install Skupper Controller:**
-  - Applies the Skupper Controller manifest to the Kubernetes cluster, ensuring the deployment of Skupper is initiated.
+  - Uses the `kubernetes.core.k8s` module to apply the controller manifest to the Kubernetes cluster.
 
 ## Requirements
 
@@ -15,17 +15,12 @@ This Ansible role deploys the Skupper Controller to a Kubernetes cluster. The co
 
 ## Role Variables
 
-- **Defaults:**
-  - `install_skupper_controller_skupper_controller_manifest`: URL of the Skupper Controller manifest file. The default value points to a cluster-scoped manifest hosted in the Skupper project's repository:
-    ```yaml
-    install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
-    ```
-- **Inventory Variables:**
-  - `kubeconfig`: Path to the kubeconfig file for connecting to the target Kubernetes cluster. This variable must be set in the inventory.
+| Variable                                           | Default Value                                                                                 | Description                                                              |
+|----------------------------------------------------|-----------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| `install_skupper_controller_skupper_controller_manifest` | `https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml` | URL of the Skupper Controller manifest file to be applied.              |
+| `kubeconfig`                                       |                                                                                               | Path to the kubeconfig file for accessing the Kubernetes cluster. **Mandatory.** |
 
 ## Example Usage
-
-Define the required variables in your inventory, and include the role in your playbook:
 
 ### Playbook
 
@@ -39,17 +34,24 @@ Define the required variables in your inventory, and include the role in your pl
 
 ### Inventory (host_vars)
 
+#### `east.yml`
+
 ```yaml
-# host_vars for target host
-kubeconfig: /path/to/your/kubeconfig
+kubeconfig: /path/to/east/kubeconfig
+```
+
+#### `west.yml`
+
+```yaml
+kubeconfig: /path/to/west/kubeconfig
 ```
 
 ## Notes
 
-- This role uses the `kubernetes.core.k8s` module to interact directly with the Kubernetes API. Ensure the `kubernetes.core` collection is installed and configured correctly.
-- The `install_skupper_controller_skupper_controller_manifest` variable can be overridden if you want to use a different version or a custom manifest.
-- The `skupper_controller_results` variable stores the outcome of the deployment task for further inspection or debugging.
+- The controller manifest is applied as-is from the provided URL. Ensure that the URL points to a valid and compatible version of the Skupper Controller manifest.
+- The `failed_when` directive is set to `false` to prevent role failure in case the manifest is already applied or does not require changes.
+- The role uses the `kubernetes.core.k8s` module, which requires the `kubernetes.core` collection to be installed.
 
 ## License
 
-This project is licensed under the Apache License 2.0.
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

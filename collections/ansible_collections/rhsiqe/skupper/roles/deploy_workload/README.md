@@ -1,64 +1,80 @@
 # Role: deploy_workload
 
-This Ansible role deploys a workload as a Kubernetes deployment in a specified namespace. The namespace is constructed using a prefix and name provided as variables, and the role includes a wait task to ensure the deployment is fully ready before completion.
+This Ansible role automates the deployment of a workload in a Kubernetes cluster. It creates a Deployment resource in the specified namespace, waits for the workload to be ready, and displays the running pods for verification.
 
 ## Tasks
 
-- **Set Namespace**: Constructs the namespace by combining `namespace_prefix` and `namespace_name`.
-- **Deploy Workload**: Creates a Kubernetes deployment in the specified namespace with the provided workload image, replicas, and other configurations.
-- **Wait for Deployment**: Monitors the status of the deployment's pods, waiting until the specified number of replicas are running.
-- **Display Pods**: Outputs the names of the running pods for the deployed workload.
+- **Set Namespace:**
+  - Derives the namespace based on the prefix and name variables.
+- **Deploy Workload:**
+  - Creates a Deployment resource with the specified replicas and container image.
+- **Wait for Deployment Readiness:**
+  - Ensures the workload is running by verifying pod statuses.
+- **Display Pod Information:**
+  - Outputs the names of the running pods for the deployed workload.
 
 ## Requirements
 
 - Ansible 2.1 or newer
 - `kubernetes.core` collection installed on the control node
-- Access to a Kubernetes cluster via `kubeconfig`
+- Kubernetes cluster accessible via `kubeconfig`
 
 ## Role Variables
 
-- **Role Variables**:
-  - `deploy_workload_deployment_name`: Specifies the name of the deployment.
-  - `deploy_workload_workload_image`: Specifies the container image for the deployment.
-  - `deploy_workload_replicas`: Number of replicas to deploy. Default is 1.
-- **Inventory Variables**:
-  - `namespace_prefix`: Prefix used to create the namespace.
-  - `namespace_name`: Base name for the namespace (e.g., `hello-world`), used to form the complete namespace.
-  - `kubeconfig`: Path to the `kubeconfig` file for accessing the Kubernetes cluster.
+| Variable                          | Default Value       | Description                                                                     |
+|-----------------------------------|---------------------|---------------------------------------------------------------------------------|
+| `deploy_workload_namespace_name`  | `default`           | Namespace where the workload will be deployed.                                 |
+| `deploy_workload_deployment_name` | `app`               | Name of the deployment.                                                        |
+| `deploy_workload_replicas`        | `1`                 | Number of replicas for the workload.                                           |
+| `deploy_workload_workload_image`  |                     | Container image to use for the deployment. **Must be defined in playbook/inventory.** |
+| `deploy_workload_output_path`     | `/tmp/localhost`    | Path to store any outputs (currently unused, reserved for future use).         |
+| `namespace_prefix`                |                     | Prefix for the namespace (defined in inventory or playbook).                   |
+| `namespace_name`                  |                     | Name of the namespace (defined in inventory or playbook).                      |
+| `kubeconfig`                      |                     | Path to the kubeconfig file for cluster access.                                |
 
 ## Example Usage
-
-Define the deployment parameters and include the role in your playbook. Specify the namespace prefix and name in your inventory or playbook.
 
 ### Playbook
 
 ```yaml
 - hosts: all
   tasks:
-    - name: Deploy workload
-      include_role:
-        name: deploy_workload
+    - name: Deploy a workload in the specified namespace
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.deploy_workload
       vars:
-        deploy_workload_deployment_name: myapp
+        namespace_prefix: "skupper"
+        namespace_name: "east"
+        deploy_workload_deployment_name: "my-app"
+        deploy_workload_replicas: 3
         deploy_workload_workload_image: "nginx:latest"
-        deploy_workload_replicas: 2
 ```
 
-### Inventory (host_vars or group_vars)
+### Inventory (host_vars)
+
+#### `east.yml`
 
 ```yaml
-# host_vars for target host
-namespace_prefix: "test"
-namespace_name: "hello-world"
-kubeconfig: "/path/to/kubeconfig"
+kubeconfig: /path/to/east/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "east"
 ```
 
-### Example Output
+#### `west.yml`
 
-The namespace created will follow the format `<namespace_prefix>-<namespace_name>`, and the deployment pods will be listed once they are running.
+```yaml
+kubeconfig: /path/to/west/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "west"
+```
 
 ## Notes
 
-- Ensure `namespace_prefix`, `namespace_name`, and `kubeconfig` are defined in the inventory for each target host.
-- The `wait` task checks the readiness of the deployment pods, retrying until all replicas are running or a timeout is reached (30 retries, 10-second delay).
-- This role uses the `kubernetes.core.k8s` module to manage Kubernetes resources directly, providing a robust alternative to shell-based `kubectl` commands.
+- The namespace is derived as `<namespace_prefix>-<namespace_name>`.
+- Ensure `deploy_workload_workload_image` is defined in the playbook or inventory as it is mandatory for the deployment.
+- Pods will be verified to ensure they are in the `Running` state.
+- The `kubernetes.core.k8s` module is used for all Kubernetes operations, requiring the `kubernetes.core` collection to be installed.
+
+## License
+
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

@@ -1,66 +1,138 @@
 # Rhsiqe Skupper Collection
 
-This repository contains the `rhsiqe.skupper` Ansible Collection.
+This repository contains the `rhsiqe.skupper` Ansible Collection, providing roles and modules to manage, test, and deploy Skupper environments in Kubernetes.
+
+---
 
 ## Tested with Ansible
 
-Tested with ansible-core >=2.14 releases and the current development version of ansible-core.
+This collection has been tested with:
+- **ansible-core >=2.14** 
+- The current development version of ansible-core.
 
-## External requirements
+---
 
-Some modules and plugins require external libraries. Please check the requirements for each plugin or module you use in the documentation to find out which requirements are needed.
+## External Requirements
 
-## Included content
+Some modules and plugins require external libraries. Refer to the documentation of each role or module for specific dependencies.
 
-Please check the included content on the [Ansible Galaxy page for this collection](https://galaxy.ansible.com/rhsiqe/skupper).
+---
 
-## Using this collection
+## Included Content
 
+The collection includes the following roles:
+
+1. **`deploy_workload`**: Deploys workloads in Kubernetes namespaces.
+2. **`env_shakeout`**: Validates the Kubernetes environment for Skupper.
+3. **`generate_namespaces`**: Creates namespaces with defined naming conventions.
+4. **`install_skupper`**: Installs Skupper by applying CRDs and its controller.
+5. **`skupper_site`**: Configures Skupper sites with advanced settings.
+6. **`expose_connector`**: Deploys connectors for application routing.
+7. **`access_grant`**: Manages access tokens for Skupper endpoints.
+8. **`consume_service`**: Configures listeners for consuming services via Skupper.
+9. **`link_site`**: Establishes site links between Skupper instances.
+10. **`install_skupper_controller`**: Installs the Skupper controller for cluster-wide configuration.
+11. **`teardown_test`**: Cleans up Skupper resources and namespaces after testing.
+
+For a detailed list of all content, visit the [Ansible Galaxy page for this collection](https://galaxy.ansible.com/rhsiqe/skupper).
+
+---
+
+## Using This Collection
+
+### Installation
+
+To install the collection from Ansible Galaxy, run:
+
+```bash
+ansible-galaxy collection install rhsiqe.skupper
 ```
-    ansible-galaxy collection install rhsiqe.skupper
-```
 
-You can also include it in a `requirements.yml` file and install it via `ansible-galaxy collection install -r requirements.yml` using the format:
+### Using `requirements.yml`
+
+You can include the collection in a `requirements.yml` file:
 
 ```yaml
 collections:
   - name: rhsiqe.skupper
 ```
 
-To upgrade the collection to the latest available version, run the following command:
+Install it via:
+
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+### Upgrading the Collection
+
+To upgrade the collection to the latest available version:
 
 ```bash
 ansible-galaxy collection install rhsiqe.skupper --upgrade
 ```
 
-You can also install a specific version of the collection, for example, if you need to downgrade when something is broken in the latest version (please report an issue in this repository). Use the following syntax where `X.Y.Z` can be any [available version](https://galaxy.ansible.com/rhsiqe/skupper):
+### Installing Specific Versions
+
+To install a specific version (e.g., for compatibility or bug fixes):
 
 ```bash
 ansible-galaxy collection install rhsiqe.skupper:==X.Y.Z
 ```
 
-See [Ansible Using Collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
+Replace `X.Y.Z` with any [available version](https://galaxy.ansible.com/rhsiqe/skupper).
 
-## Release notes
+For detailed information, refer to [Ansible Using Collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html).
 
-See the [changelog](https://github.com/ansible-collections/REPONAMEHERE/tree/main/CHANGELOG.rst).
+---
+
+## Release Notes
+
+Refer to the [changelog](https://github.com/ansible-collections/REPONAMEHERE/tree/main/CHANGELOG.rst) for updates and release notes.
+
+---
+
+## Running Tests
+
+### Role-Specific Testing
+
+Each role includes its own dedicated test playbook. You can manually test a specific role. For example, to test the `access_grant` role:
+
+```bash
+ansible-playbook collections/ansible_collections/rhsiqe/skupper/roles/access_grant/tests/test_playbook.yml \
+  -i collections/ansible_collections/rhsiqe/skupper/roles/access_grant/tests/inventory/hosts.yml
+```
+
+### Running All Tests
+
+To run all tests in a logical order, use the `run_all_tests.sh` script. The script ensures dependencies between roles are respected and logs results for review.
+
+```bash
+make tests
+```
+
+Test logs are stored in the `test_results/` directory.
+
+---
 
 ## Roadmap
 
-<!-- Optional. Include the roadmap for this collection, and the proposed release/versioning strategy so users can anticipate the upgrade/update cycle. -->
+- Further integration with advanced Skupper features.
+- Automated testing for compatibility with future Ansible and Kubernetes releases.
+- Performance testing roles and scenarios.
 
-## More information
+---
 
-<!-- List out where the user can find additional information, such as working group meeting times, slack/IRC channels, or documentation for the product this collection automates. At a minimum, link to: -->
+## More Information
 
-- [Ansible Collection overview](https://github.com/ansible-collections/overview)
-- [Ansible User guide](https://docs.ansible.com/ansible/devel/user_guide/index.html)
-- [Ansible Developer guide](https://docs.ansible.com/ansible/devel/dev_guide/index.html)
-- [Ansible Collections Checklist](https://github.com/ansible-collections/overview/blob/main/collection_requirements.rst)
-- [Ansible Community code of conduct](https://docs.ansible.com/ansible/devel/community/code_of_conduct.html)
-- [The Bullhorn (the Ansible Contributor newsletter)](https://docs.ansible.com/ansible/devel/community/communication.html#the-bullhorn)
-- [News for Maintainers](https://github.com/ansible-collections/news-for-maintainers)
+For additional resources, refer to:
+- [Ansible Collection Overview](https://github.com/ansible-collections/overview)
+- [Ansible User Guide](https://docs.ansible.com/ansible/latest/user_guide/index.html)
+- [Ansible Developer Guide](https://docs.ansible.com/ansible/latest/dev_guide/index.html)
+- [Ansible Community Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
+- [The Bullhorn (Ansible Contributor Newsletter)](https://docs.ansible.com/ansible/latest/community/communication.html#the-bullhorn)
+
+---
 
 ## Licensing
 
-Apache License, Version 2.0
+This project is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).

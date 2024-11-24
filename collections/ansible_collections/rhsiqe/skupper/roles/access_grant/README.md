@@ -1,104 +1,83 @@
 # Role: access_grant
 
-This Ansible role manages Skupper AccessGrant resources in a Kubernetes cluster. It allows you to define, render, and apply AccessGrant manifests using a template, with customization options for redemptions, expiration, and namespace.
+This Ansible role automates the creation and management of `AccessGrant` and `AccessToken` resources in a Kubernetes cluster using the Skupper API. It ensures the generation of manifests from templates, applies them to the cluster, and waits for the resources to reach a ready state. 
 
 ## Tasks
 
-- **Set Namespace Name:**
-  - Combines the prefix and base namespace name to form the target namespace.
-- **Clean Existing Manifests:**
-  - Ensures old AccessGrant manifests are removed to prevent conflicts.
-- **Render Manifest Template:**
-  - Generates the AccessGrant manifest from a Jinja2 template.
-- **Apply Manifest:**
-  - Creates or updates the AccessGrant resource in the specified namespace.
-- **Wait for Readiness:**
-  - Polls the AccessGrant resource until it is in a `Ready` state.
+- **Generate AccessGrant and AccessToken Manifests:**
+  - Renders manifests from Jinja2 templates for `AccessGrant` and `AccessToken` resources.
+- **Apply Manifests to Kubernetes Cluster:**
+  - Uses `kubernetes.core.k8s` to apply the generated manifests.
+- **Monitor Resource State:**
+  - Waits for `AccessGrant` to be ready and verifies the state of pods in the namespace.
+- **Extract Resource Details:**
+  - Captures the details of the created `AccessGrant` and outputs relevant data for further use.
 
 ## Requirements
 
-- Ansible 2.10 or newer
+- Ansible 2.1 or newer
 - `kubernetes.core` collection installed on the control node
 - Kubernetes cluster accessible via `kubeconfig`
+- Skupper installed and configured in the target namespaces
 
 ## Role Variables
 
-- **Default Variables:**
-  - `access_grant_name`: Name of the AccessGrant resource (default: `my-grant`).
-  - `access_grant_redemptions_allowed`: Number of redemptions allowed for the AccessGrant (default: `10`).
-  - `access_grant_expiration_window`: Expiration window for the AccessGrant, specified as a duration (default: `1h`).
-  - `access_grant_state`: Desired state of the AccessGrant resource (default: `present`).
-  - `access_grant_template`: Path to the Jinja2 template for the AccessGrant manifest (default: `access-grant.yml.j2`).
-
-- **Inventory Variables:**
-  - `kubeconfig`: Path to the kubeconfig file for connecting to the Kubernetes cluster.
-  - `namespace_prefix`: Prefix for the namespace where the AccessGrant will be created.
-  - `namespace_name`: Base name for the namespace.
-
-## Template Details
-
-The AccessGrant manifest is generated from a Jinja2 template (`access-grant.yml.j2`) with the following structure:
-
-```yaml
-apiVersion: skupper.io/v2alpha1
-kind: AccessGrant
-metadata:
-  name: {{ access_grant_name }}
-spec:
-  redemptionsAllowed: {{ access_grant_redemptions_allowed }}
-  expirationWindow: "{{ access_grant_expiration_window }}"
-```
+| Variable                             | Default Value                 | Description                                                                 |
+|--------------------------------------|-------------------------------|-----------------------------------------------------------------------------|
+| `access_grant_name`                  | `my-grant`                    | Name of the `AccessGrant` resource.                                         |
+| `access_grant_redemptions_allowed`   | `10`                          | Number of redemptions allowed for the `AccessGrant`.                        |
+| `access_grant_expiration_window`     | `1h`                          | Expiration window for the `AccessGrant`.                                    |
+| `access_grant_state`                 | `present`                     | Desired state of the `AccessGrant` resource (`present` or `absent`).        |
+| `access_grant_template`              | `access-grant.yml.j2`         | Path to the Jinja2 template for `AccessGrant`.                              |
+| `access_grant_token_template`        | `access_token.yml.j2`         | Path to the Jinja2 template for `AccessToken`.                              |
+| `access_grant_output_path`           | `/tmp/localhost`              | Directory where the generated manifest files will be stored.               |
+| `namespace_prefix`                   |                               | Prefix for the Kubernetes namespace.                                        |
+| `namespace_name`                     |                               | Name of the Kubernetes namespace.                                           |
+| `kubeconfig`                         |                               | Path to the kubeconfig file for cluster access.                             |
 
 ## Example Usage
-
-Define variables and call the role in your playbook. Customize the namespace and AccessGrant properties as needed.
 
 ### Playbook
 
 ```yaml
 - hosts: all
   tasks:
-    - name: Manage AccessGrant
+    - name: Include the access_grant role
       ansible.builtin.include_role:
         name: rhsiqe.skupper.access_grant
       vars:
-        namespace_prefix: example
-        namespace_name: skupper
-        access_grant_name: my-access-grant
+        namespace_prefix: "skupper"
+        namespace_name: "east"
+        access_grant_name: "my-access-grant"
         access_grant_redemptions_allowed: 5
-        access_grant_expiration_window: 2h
+        access_grant_expiration_window: "2h"
 ```
 
 ### Inventory (host_vars)
 
+#### `east.yml`
+
 ```yaml
-# host_vars for target host
-kubeconfig: /path/to/kubeconfig
-namespace_prefix: example
-namespace_name: skupper
+kubeconfig: /path/to/east/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "east"
+```
+
+#### `west.yml`
+
+```yaml
+kubeconfig: /path/to/west/kubeconfig
+namespace_prefix: "skupper"
+namespace_name: "west"
 ```
 
 ## Notes
 
-- The namespace used will be in the format: `<namespace_prefix>-<namespace_name>`.
-- Ensure the `kubeconfig` and namespace variables are defined at the inventory level.
-- The role uses the `kubernetes.core.k8s` module for managing Kubernetes resources, enabling a declarative configuration approach.
-
-## Testing
-
-Tests for this role are located in the `tests` directory and include:
-
-- Inventory setup (`inventory/hosts.yml`)
-- Host-specific variables (`host_vars/localhost.yml`)
-- Group-specific variables (`group_vars/all.yml`)
-- Test playbook (`test_playbook.yml`)
-
-Run the test playbook to validate role functionality:
-
-```bash
-ansible-playbook -i tests/inventory/hosts.yml tests/test_playbook.yml
-```
+- The `namespace` is derived as `<namespace_prefix>-<namespace_name>`.
+- Generated manifests are stored in the `access_grant_output_path` directory, named according to the inventory host.
+- The `AccessGrant` details (e.g., `ca`, `code`, and `url`) are captured and available for further use.
+- Ensure that the `kubernetes.core` collection is installed to use the `kubernetes.core.k8s` module.
 
 ## License
 
-This project is licensed under the Apache License 2.0. See the LICENSE file for details.
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

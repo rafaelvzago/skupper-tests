@@ -1,38 +1,34 @@
 # Role: install_skupper
 
-This Ansible role automates the installation of Skupper in a Kubernetes cluster. It clones the Skupper repository, applies the required Custom Resource Definitions (CRDs), and deploys the Skupper Controller using a pre-defined manifest.
+This Ansible role automates the installation of Skupper by cloning its repository, applying Custom Resource Definitions (CRDs), and cleaning up temporary files.
 
 ## Tasks
 
-- **Setup Temporary Workspace:**
-  - Creates a temporary directory to clone the Skupper repository.
-  - Cleans up the directory after installation.
-- **Clone Repository:**
-  - Clones the Skupper repository from the specified branch.
-- **Install CRDs:**
-  - Identifies and applies all CRD YAML files from the cloned repository.
-- **Deploy Skupper Controller:**
-  - Installs the Skupper Controller using a manifest URL.
-- **Clean Up:**
-  - Removes the temporary workspace used during the installation.
+- **Clone Skupper Repository:**
+  - Clones the specified Skupper repository and branch to a temporary directory.
+- **Find CRD Files:**
+  - Locates the CRD YAML files in the repository.
+- **Apply CRDs to Kubernetes:**
+  - Installs the Skupper CRDs in the specified Kubernetes cluster using `kubernetes.core.k8s`.
+- **Clean Up Temporary Directory:**
+  - Removes the cloned repository to maintain a clean environment.
 
 ## Requirements
 
-- Ansible 2.9 or newer
-- `kubernetes.core` collection installed
+- Ansible 2.1 or newer
+- `kubernetes.core` collection installed on the control node
 - Kubernetes cluster accessible via `kubeconfig`
+- Git installed on the control node
 
 ## Role Variables
 
-- **Defaults (in `defaults/main.yml`):**
-  - `install_skupper_skupper_repository`: Repository URL for the Skupper project (default: `https://github.com/skupperproject/skupper.git`).
-  - `install_skupper_skupper_branch`: Branch of the repository to clone (default: `v2`).
-  - `install_skupper_skupper_controller_manifest`: URL to the Skupper Controller deployment manifest (default: `https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml`).
-  - `install_skupper_skupper_release_name`: Release name for the Skupper installation (default: `skupper-setup`).
-  - `install_skupper_helm_install_scope`: Scope of the Helm installation (default: `cluster`).
-
-- **Required Inventory Variables:**
-  - `kubeconfig`: Path to the `kubeconfig` file for accessing the cluster.
+| Variable                               | Default Value                             | Description                                                                 |
+|----------------------------------------|-------------------------------------------|-----------------------------------------------------------------------------|
+| `install_skupper_skupper_repository`  | `https://github.com/skupperproject/skupper.git` | URL of the Skupper repository.                                             |
+| `install_skupper_skupper_branch`      | `v2`                                      | Branch of the Skupper repository to clone.                                 |
+| `install_skupper_skupper_release_name`| `skupper-setup`                           | Release name for Skupper. (Currently unused.)                              |
+| `install_skupper_install_output_path` | `/tmp/localhost`                          | Directory where the repository will be cloned temporarily.                 |
+| `kubeconfig`                          |                                           | Path to the kubeconfig file for cluster access. **Mandatory.**             |
 
 ## Example Usage
 
@@ -41,28 +37,36 @@ This Ansible role automates the installation of Skupper in a Kubernetes cluster.
 ```yaml
 - hosts: all
   tasks:
-    - name: Install Skupper in the cluster
+    - name: Install Skupper in the target cluster
       ansible.builtin.include_role:
         name: rhsiqe.skupper.install_skupper
       vars:
-        install_skupper_skupper_branch: v2
+        install_skupper_skupper_branch: "v2"
+        install_skupper_install_output_path: "/tmp/skupper"
 ```
 
-### Inventory
+### Inventory (host_vars)
 
-#### `host_vars/localhost.yml`
+#### `east.yml`
 
 ```yaml
-kubeconfig: /path/to/kubeconfig
+kubeconfig: /path/to/east/kubeconfig
+install_skupper_install_output_path: "/tmp/skupper"
+```
+
+#### `west.yml`
+
+```yaml
+kubeconfig: /path/to/west/kubeconfig
+install_skupper_install_output_path: "/tmp/skupper"
 ```
 
 ## Notes
 
-- The role uses the `kubernetes.core.k8s` module to manage Kubernetes resources declaratively.
-- CRDs are located in the `api/types/crds/` directory of the Skupper repository and are applied automatically.
-- The role cleans up all temporary directories created during the process, ensuring no residual files are left on the control node.
-- Ensure the `kubeconfig` file and permissions allow cluster-wide operations if `install_skupper_helm_install_scope` is set to `cluster`.
+- The CRDs are applied in the specified Kubernetes cluster, ensuring Skupper components can be deployed.
+- The role cleans up the temporary directory after applying the CRDs.
+- Ensure Git is installed on the control node for cloning the repository.
 
 ## License
 
-Apache License 2.0
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.
