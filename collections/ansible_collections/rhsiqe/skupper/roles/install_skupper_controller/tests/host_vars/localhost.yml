@@ -1,5 +1,0 @@
----
-kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config"
-namespace_prefix: test
-install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
-
