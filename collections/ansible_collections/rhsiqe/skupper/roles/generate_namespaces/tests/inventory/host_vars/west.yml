@@ -1,0 +1,6 @@
+---
+# Kubeconfig path for west site
+kubeconfig: /home/rzago/.kube/config
+
+# Namespace configuration
+namespace_name: hello-world-west
