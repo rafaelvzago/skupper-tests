@@ -45,15 +45,10 @@ jobs:
       # Start Minikube
       - name: Start Minikube
         run: |
-          export KUBECONFIG=~/.kube/config
-          minikube start --driver=docker --cpus 2 --memory 2048
-          minikube kubectl -- get pods -A
-
-      # **Run Minikube Tunnel**
-      - name: Run Minikube Tunnel
-        run: |
-          sudo nohup minikube tunnel --cleanup &> tunnel.log &
-          sleep 5  # Wait for the tunnel to establish
+          mkdir $HOME/.kube && touch $HOME/.kube/config && chmod 600 $HOME/.kube/config
+          export CHANGE_MINIKUBE_NONE_USER=true
+          minikube start --driver=docker
+          minikube tunnel &
 
       # Install Ansible Collection
       - name: Install Collection from requirements.yml
