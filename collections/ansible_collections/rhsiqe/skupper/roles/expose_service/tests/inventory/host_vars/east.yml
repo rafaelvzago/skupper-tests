@@ -1,0 +1,11 @@
+---
+# Kubeconfig path for east site
+kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
+
+# Namespace configuration
+namespace_name: hello-world-east
+
+# Deployment configuration for workload
+deploy_workload_workload_image: quay.io/skupper/hello-world-backend:latest
+deploy_workload_deployment_name: "backend"
+deploy_workload_replicas: 3

@@ -1,0 +1,6 @@
+---
+# defaults file for collections/ansible_collections/rhsiqe/skupper/roles/expose_service
+expose_service_name: frontend  # Name of the service
+expose_service_port: 8080      # External port
+expose_service_target_port: 8080  # Target port on the deployment
+expose_service_type: LoadBalancer  # Service type (ClusterIP, NodePort, LoadBalancer)
