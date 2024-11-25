@@ -79,6 +79,12 @@
       when:
         - "'east' in inventory_hostname"
 
+    - name: Exposing the service at the frontend at west site
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.expose_service
+      when:
+        - "'west' in inventory_hostname"
+
     - name: Deleting the test resources
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_tests

@@ -25,6 +25,7 @@ ROLE_ORDER=(
   "consume_service"
   "access_grant"
   "link_site"
+  "expose_service"
 )
 
 # Function to calculate the number of dots needed

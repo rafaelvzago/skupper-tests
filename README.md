@@ -35,23 +35,27 @@ This project provides a modular and scalable framework to test and manage Skuppe
 - **Purpose**: Creates and deploys connectors for application routing in Skupper.
 - **Tests**: Validates connector configuration and functionality.
 
-### **7. `access_grant`**
+### **7. `expose_service`**
+- **Purpose**: Exposes services in Kubernetes namespaces for external access.
+- **Tests**: Confirms service exposure and connectivity.
+
+### **8. `access_grant`**
 - **Purpose**: Manages access credentials for Skupper endpoints.
 - **Tests**: Validates access token generation and usage.
 
-### **8. `consume_service`**
+### **9. `consume_service`**
 - **Purpose**: Configures listeners for consuming services via Skupper.
 - **Tests**: Ensures listener setup and service consumption.
 
-### **9. `link_site`**
+### **10. `link_site`**
 - **Purpose**: Establishes site links between Skupper instances.
 - **Tests**: Confirms successful link creation and connectivity.
 
-### **10. `install_skupper_controller`**
+### **11. `install_skupper_controller`**
 - **Purpose**: Installs and configures the Skupper controller for advanced cluster settings.
 - **Tests**: Verifies controller setup and operational readiness.
 
-### **11. `teardown_test`**
+### **12. `teardown_test`**
 - **Purpose**: Cleans up namespaces and removes Skupper-related resources after testing.
 - **Tests**: Ensures proper cleanup and verifies resource deletion.
 
@@ -89,6 +93,7 @@ skupper-tests/
     │               ├── deploy_workload/
     │               ├── env_shakeout/
     │               ├── expose_connector/
+    │               ├── expose_service/
     │               ├── generate_namespaces/
     │               ├── install_skupper/
     │               ├── install_skupper_controller/
@@ -135,6 +140,7 @@ The `run_all_tests.sh` script executes the roles in the following order:
 8. `consume_service`
 9. `access_grant`
 10. `link_site`
+11. `expose_service`
 
 Test logs are stored in the `test_results/` directory with timestamps.
 
