@@ -17,7 +17,6 @@
   until: namespace_info.resources | length == 0
   retries: 20
   delay: 2
-  failed_when: false
 
 - name: Deleting test temporary directory
   ansible.builtin.file:
