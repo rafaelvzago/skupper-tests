@@ -14,6 +14,9 @@
     state: present
   register: apply_accesstoken
 
+- name: Debug application result
+  ansible.builtin.debug:
+    var: apply_accesstoken
 
 - name: Waiting until links in links.skupper.io are ready
   kubernetes.core.k8s_info:
@@ -33,6 +36,47 @@
   retries: 10
   delay: 10
 
-- name: Debug application result
-  ansible.builtin.debug:
-    var: apply_accesstoken
+- name: Waiting until the Connector is ready and message is OK
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Connector
+    api_version: skupper.io/v2alpha1
+    namespace: "{{ namespace }}"
+    name: backend
+  register: connector_info
+  until: >
+    connector_info.resources | length > 0 and
+    connector_info.resources[0].status is defined and
+    connector_info.resources[0].status.conditions is defined and
+    (
+      connector_info.resources[0].status.conditions |
+      selectattr('type', 'equalto', 'Ready') |
+      selectattr('status', 'equalto', 'True') |
+      selectattr('message', 'equalto', 'OK') |
+      list |
+      length
+    ) > 0
+  retries: 10
+  delay: 10
+
+- name: Waiting until the Connector is ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Connector
+    api_version: skupper.io/v2alpha1
+    namespace: "{{ namespace }}"
+    name: backend
+  register: connector_info
+  until: >
+    connector_info.resources | length > 0 and
+    connector_info.resources[0].status is defined and
+    connector_info.resources[0].status.conditions is defined and
+    (
+      connector_info.resources[0].status.conditions |
+      selectattr('type', 'equalto', 'Ready') |
+      selectattr('status', 'equalto', 'True') |
+      list |
+      length
+    ) > 0
+  retries: 10
+  delay: 10
