@@ -59,6 +59,10 @@ This project provides a modular and scalable framework to test and manage Skuppe
 - **Purpose**: Cleans up namespaces and removes Skupper-related resources after testing.
 - **Tests**: Ensures proper cleanup and verifies resource deletion.
 
+### **13. `run_curl`**
+- **Purpose**: Runs a test to validate Skupper connectivity.
+- **Tests**: Validates Skupper connectivity and service availability.
+
 ---
 
 ## Folder Structure
@@ -98,6 +102,7 @@ skupper-tests/
     │               ├── install_skupper/
     │               ├── install_skupper_controller/
     │               ├── link_site/
+    │               ├── run_curl_test/
     │               ├── skupper_site/
     │               └── teardown_test/
     └── requirements.yml       # Collection dependencies
@@ -141,6 +146,7 @@ The `run_all_tests.sh` script executes the roles in the following order:
 9. `access_grant`
 10. `link_site`
 11. `expose_service`
+12. `run_curl_test`
 
 Test logs are stored in the `test_results/` directory with timestamps.
 
