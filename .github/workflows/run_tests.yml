@@ -2,12 +2,6 @@ name: Run Ansible Role Tests with Minikube
 
 on:
   workflow_dispatch:  # Enables manual trigger for the workflow
-  push:
-    branches:
-      - main  # Run on push events only on the main branch
-  pull_request:
-    branches:
-      - main  # Run on pull requests targeting the main branch
 
 jobs:
   test:
