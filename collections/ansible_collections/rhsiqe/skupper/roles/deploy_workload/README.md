@@ -76,7 +76,7 @@ namespace_name: "west"
 - Pods will be verified to ensure they are in the `Running` state.
 - The `kubernetes.core.k8s` module is used for all Kubernetes operations, requiring the `kubernetes.core` collection to be installed.
 - If the workload does not requires any command to be executed in the initalization, you can keep the variable deploy_workload_deployment_command
-  commented out. Or up can set it, like this : 
+  commented out. Or you can set it, like this : 
   deploy_workload_deployment_command:
    - iperf3
    - "-s"
