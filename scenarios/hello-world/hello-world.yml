@@ -73,15 +73,23 @@
       vars:
         access_grant_output_path: "{{ temp_dir_path }}"
 
+    - name: Exposing the service at the frontend at west site
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.expose_service
+      when:
+        - "'west' in inventory_hostname"
+
     - name: Linking east site to west site
       ansible.builtin.include_role:
         name: rhsiqe.skupper.link_site
       when:
         - "'east' in inventory_hostname"
 
-    - name: Exposing the service at the frontend at west site
+    - name: Testing the connectivity between the sites
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.expose_service
+        name: rhsiqe.skupper.run_curl
+      vars:
+        test_connectivity_output_path: "{{ temp_dir_path }}"
       when:
         - "'west' in inventory_hostname"
 

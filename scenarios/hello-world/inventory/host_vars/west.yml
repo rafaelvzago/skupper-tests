@@ -48,3 +48,14 @@ expose_service_name: frontend
 expose_service_port: 8080
 expose_service_target_port: 8080
 expose_service_type: LoadBalancer
+
+# Default variables for the link_site role
+link_site_skip_connector_check: true
+
+# Run curl configuration
+run_curl_namespace: default
+run_curl_address: "backend:8080/api/hello"
+run_curl_image: "quay.io/rzago/curl-telnet"
+run_curl_pod_name: curl-test
+run_curl_retries: 10
+run_curl_delay: 10
