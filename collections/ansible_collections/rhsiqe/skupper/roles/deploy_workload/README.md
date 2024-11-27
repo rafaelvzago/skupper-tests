@@ -21,16 +21,17 @@ This Ansible role automates the deployment of a workload in a Kubernetes cluster
 
 ## Role Variables
 
-| Variable                          | Default Value       | Description                                                                     |
-|-----------------------------------|---------------------|---------------------------------------------------------------------------------|
-| `deploy_workload_namespace_name`  | `default`           | Namespace where the workload will be deployed.                                 |
-| `deploy_workload_deployment_name` | `app`               | Name of the deployment.                                                        |
-| `deploy_workload_replicas`        | `1`                 | Number of replicas for the workload.                                           |
-| `deploy_workload_workload_image`  |                     | Container image to use for the deployment. **Must be defined in playbook/inventory.** |
-| `deploy_workload_output_path`     | `/tmp/localhost`    | Path to store any outputs (currently unused, reserved for future use).         |
-| `namespace_prefix`                |                     | Prefix for the namespace (defined in inventory or playbook).                   |
-| `namespace_name`                  |                     | Name of the namespace (defined in inventory or playbook).                      |
-| `kubeconfig`                      |                     | Path to the kubeconfig file for cluster access.                                |
+| Variable                             | Default Value         | Description                                                                          |
+|--------------------------------------|-----------------------|--------------------------------------------------------------------------------------|
+| `deploy_workload_namespace_name`     | `default`             | Namespace where the workload will be deployed.                                       |
+| `deploy_workload_deployment_command` | `""` - Commented out  | Command to run in the container initialization. If not in use, keep it commented out |
+| `deploy_workload_deployment_name`    | `app`                 | Name of the deployment.                                                              |
+| `deploy_workload_replicas`           | `1`                   | Number of replicas for the workload.                                                 |
+| `deploy_workload_workload_image`     |                       | Container image to use for the deployment. **Must be defined in playbook/inventory.**    |
+| `deploy_workload_output_path`        | `/tmp/localhost`      | Path to store any outputs (currently unused, reserved for future use).               |
+| `namespace_prefix`                   |                       | Prefix for the namespace (defined in inventory or playbook).                         |
+| `namespace_name`                     |                       | Name of the namespace (defined in inventory or playbook).                            |
+| `kubeconfig`                         |                       | Path to the kubeconfig file for cluster access.                                      |
 
 ## Example Usage
 
@@ -74,6 +75,12 @@ namespace_name: "west"
 - Ensure `deploy_workload_workload_image` is defined in the playbook or inventory as it is mandatory for the deployment.
 - Pods will be verified to ensure they are in the `Running` state.
 - The `kubernetes.core.k8s` module is used for all Kubernetes operations, requiring the `kubernetes.core` collection to be installed.
+- If the workload does not requires any command to be executed in the initalization, you can keep the variable deploy_workload_deployment_command
+  commented out. Or you can set it, like this : 
+  deploy_workload_deployment_command:
+   - iperf3
+   - "-s"
+
 
 ## License
 

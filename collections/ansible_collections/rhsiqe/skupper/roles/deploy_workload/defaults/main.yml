@@ -4,3 +4,4 @@ deploy_workload_deployment_name: "app"        # Name of the deployment
 deploy_workload_replicas: 1                   # Number of replicas
 deploy_workload_output_path: "/tmp/localhost" # Must be set in the playbook or inventory
 deploy_workload_workload_image: ""            # Image to be used for the workload
+#deploy_workload_deployment_command: ""       # If the command is defined, run it in the container initialization
