@@ -34,6 +34,7 @@ The collection includes the following roles:
 10. **`install_skupper_controller`**: Installs the Skupper controller for cluster-wide configuration.
 11. **`teardown_test`**: Cleans up Skupper resources and namespaces after testing.
 12. **`expose_service`**: Exposes services in Kubernetes namespaces.
+13. **`run_curl_test`**: Runs a test to validate Skupper connectivity.
 
 For a detailed list of all content, visit the [Ansible Galaxy page for this collection](https://galaxy.ansible.com/rhsiqe/skupper).
 
