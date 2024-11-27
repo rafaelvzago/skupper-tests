@@ -95,6 +95,6 @@
 
     - name: Deleting the test resources
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.teardown_tests
+        name: rhsiqe.skupper.teardown_test
       when:
         - not skip_teardown | default(false) | bool
