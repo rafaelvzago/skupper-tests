@@ -2,3 +2,5 @@
 link_site_access_token_name: "access-token" # Name of the AccessToken
 link_site_target_namespace: "default"       # Target namespace where AccessToken will be applied
 link_site_access_token_path: ""             # Path to AccessToken manifest
+link_site_skip_listener_check: false        # Skip listener check
+link_site_skip_connector_check: false       # Skip connector check
