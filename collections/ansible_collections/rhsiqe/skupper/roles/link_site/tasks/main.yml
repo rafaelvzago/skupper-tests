@@ -1,0 +1,104 @@
+---
+# Tasks for the link_site role
+- name: Setting namespace name with prefix
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    skupper_site_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    access_token: "/tmp/{{ namespace_prefix }}-access-token.yml"
+
+- name: Apply AccessToken in target namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    src: "{{ access_token }}"
+    state: present
+  register: apply_accesstoken
+
+- name: Debug application result
+  ansible.builtin.debug:
+    var: apply_accesstoken
+
+- name: Waiting until links in links.skupper.io are ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Link
+    api_version: skupper.io/v2alpha1
+    namespace: "{{ namespace }}"
+  register: link_info
+  until: link_info.resources | length > 0 and
+         link_info.resources[0].status is defined and
+         link_info.resources[0].status.conditions is defined and
+         (link_info.resources[0].status.conditions |
+          selectattr('type', 'equalto', 'Ready') |
+          selectattr('status', 'equalto', 'True') |
+          list |
+          length) > 0
+  retries: 10
+  delay: 10
+
+- name: Check connector status
+  block:
+    - name: Debug skipping connector check
+      ansible.builtin.debug:
+        msg: "Skipping listener check as 'skip_listener_check' is set to true"
+      when: link_site_skip_connector_check
+
+    - name: Waiting until the Connector is ready and message is OK
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        kind: Connector
+        api_version: skupper.io/v2alpha1
+        namespace: "{{ namespace }}"
+        name: backend
+      register: connector_info
+      until: >
+        connector_info.resources | length > 0 and
+        connector_info.resources[0].status is defined and
+        connector_info.resources[0].status.conditions is defined and
+        (
+        connector_info.resources[0].status.conditions |
+        selectattr('type', 'equalto', 'Ready') |
+        selectattr('status', 'equalto', 'True') |
+        list |
+        length
+        ) > 0
+      retries: 10
+      delay: 10
+      when: not link_site_skip_connector_check
+
+  rescue:
+    - name: Connector check failed
+      ansible.builtin.fail:
+        msg: "Connector check failed after 10 attempts"
+      when: not link_site_skip_connector_check
+
+- name: Check listener status
+  block:
+    - name: Debug skipping listener check
+      ansible.builtin.debug:
+        msg: "Skipping listener check as 'skip_listener_check' is set to true"
+      when: link_site_skip_listener_check
+
+    - name: Waiting until listeners in skupper.io are ready
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        kind: Listener
+        api_version: skupper.io/v2alpha1
+        namespace: "{{ namespace }}"
+      register: listener_info
+      until: >
+        listener_info.resources | length > 0 and
+        listener_info.resources[0].status is defined and
+        listener_info.resources[0].status.status is defined and
+        listener_info.resources[0].status.message is defined and
+        listener_info.resources[0].status.status == "Ready" and
+        listener_info.resources[0].status.message == "OK"
+      retries: 10
+      delay: 10
+      when: not link_site_skip_listener_check
+
+  rescue:
+    - name: Listener check failed
+      ansible.builtin.fail:
+        msg: "Listener check failed after 10 attempts"
+      when: not link_site_skip_listener_check

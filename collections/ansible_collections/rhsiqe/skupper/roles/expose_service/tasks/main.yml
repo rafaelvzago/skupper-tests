@@ -1,0 +1,29 @@
+---
+# Tasks file for expose_service
+- name: Set namespace name with prefix
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Expose deployment as a service
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ expose_service_name }}"
+      spec:
+        selector:
+          app: "{{ expose_service_name }}"
+        ports:
+          - protocol: TCP
+            port: "{{ expose_service_port }}"
+            targetPort: "{{ expose_service_target_port }}"
+        type: "{{ expose_service_type }}"
+  register: expose_service_result
+
+- name: Debug service creation result
+  ansible.builtin.debug:
+    var: expose_service_result

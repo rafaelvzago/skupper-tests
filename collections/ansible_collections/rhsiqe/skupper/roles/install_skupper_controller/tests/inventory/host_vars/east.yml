@@ -1,0 +1,20 @@
+---
+# Kubeconfig path for east site
+kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
+
+# Namespace configuration
+namespace_name: hello-world-east
+
+# Deployment configuration for workload
+deploy_workload_workload_image: quay.io/skupper/hello-world-backend:latest
+deploy_workload_deployment_name: "backend"
+deploy_workload_replicas: 3
+
+# Installation configuration for Skupper
+install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git'
+install_skupper_skupper_branch: 'v2'
+install_skupper_skupper_release_name: skupper-setup
+install_skupper_install_output_path: ""
+
+# Installation of skupeer controller
+install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'

@@ -1,0 +1,32 @@
+---
+- name: Test playbook for the deploy_workload role
+  hosts: all
+  tasks:
+    - name: Set a unique temporary directory path per host
+      ansible.builtin.set_fact:
+        temp_dir_path: "/tmp/ansible.{{ inventory_hostname }}"
+
+    - name: Ensure temporary directory exists per host
+      ansible.builtin.file:
+        path: "{{ temp_dir_path }}"
+        state: directory
+        mode: '0700'
+
+    - name: Include the role to generate the namespaces
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.generate_namespaces
+      register: generate_namespaces_result
+
+    - name: Include the role to deploy the workload
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.deploy_workload
+      vars:
+        deploy_workload_output_path: "{{ temp_dir_path }}"
+      register: deploy_workload_result
+
+    - name: Include role to delete test artifacts
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.teardown_test
+      vars:
+        teardown_test_temp_dir_path: "{{ temp_dir_path }}"
+      register: teardown_result

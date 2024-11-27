@@ -1,0 +1,46 @@
+---
+# tasks file for skupper_site
+
+- name: Set manifest file path
+  ansible.builtin.set_fact:
+    skupper_site_file: "{{ skupper_site_output_path }}/skupper-site-{{ inventory_hostname }}.yml"
+    skupper_site_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Render Skupper site manifest from template
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/skupper-site.yml.j2"
+    dest: "{{ skupper_site_file }}"
+    mode: '0644'
+
+- name: Apply Skupper site manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ skupper_site_namespace }}"
+    state: "{{ skupper_site_state }}"
+    src: "{{ skupper_site_file }}"
+  register: skupper_site_results
+
+- name: Debug applied results
+  ansible.builtin.debug:
+    var: skupper_site_results
+
+- name: Wait for Skupper router pods to be ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ namespace }}"
+  register: skupper_pods
+
+- name: Wait for all pods in the namespace to be in Running state
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ skupper_site_namespace }}"
+  register: skupper_pods
+  until: skupper_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == skupper_pods.resources | length
+  retries: 30
+  delay: 10
+
+- name: Display pods
+  ansible.builtin.debug:
+    msg: "{{ skupper_pods.resources | map(attribute='metadata.name') | list }}"

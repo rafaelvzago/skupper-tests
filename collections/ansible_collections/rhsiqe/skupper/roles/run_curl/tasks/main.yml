@@ -1,0 +1,41 @@
+---
+- name: Setting namespace name with prefix
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Run curl command in Kubernetes
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Pod
+    name: curl
+    namespace: "{{ namespace }}"
+    state: present
+    definition:
+      metadata:
+        name: curl
+      spec:
+        restartPolicy: Never
+        containers:
+          - name: curl
+            image: "{{ run_curl_image }}"
+            command:
+              - /bin/sh
+              - -c
+              - curl {{ run_curl_address }}
+  register: pod_create
+  retries: 10
+  delay: 10
+  until: pod_create is success
+
+- name: Get curl pod logs
+  kubernetes.core.k8s_log:
+    name: curl
+    namespace: "{{ namespace }}"
+  register: curl_logs
+  retries: 5
+  delay: 5
+  until: curl_logs is success
+
+- name: Debug the curl command output
+  ansible.builtin.debug:
+    msg: "{{ curl_logs.log }}"

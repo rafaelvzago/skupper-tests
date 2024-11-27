@@ -1,0 +1,95 @@
+---
+# Tasks file for access_grant
+
+- name: Setting namespace name with prefix
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    access_token: "/tmp/{{ namespace_prefix }}-access-token.yml"
+
+- name: Creating AccessGrant manifest file path
+  ansible.builtin.set_fact:
+    access_grant_file: "{{ access_grant_output_path }}/access-grant-{{ inventory_hostname }}.yml"
+
+- name: Creating AccessGrant token manifest file path
+  ansible.builtin.set_fact:
+    access_token_file: "{{ access_grant_output_path }}/access-token-{{ inventory_hostname }}.yml"
+
+- name: Render AccessGrant manifest from template
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ access_grant_template }}"
+    dest: "{{ access_grant_file }}"
+    mode: '0644'
+
+- name: Apply AccessGrant manifest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ access_grant_state }}"
+    src: "{{ access_grant_file }}"
+  register: access_grant_results
+
+- name: Debug applied results
+  ansible.builtin.debug:
+    var: access_grant_results
+
+- name: Wait until AccessGrant is ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: AccessGrant
+    api_version: skupper.io/v2alpha1
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+    name: "{{ access_grant_name }}"
+  register: access_grant_info
+  until: >
+    access_grant_info.resources | length > 0 and
+    access_grant_info.resources[0].status is defined and
+    access_grant_info.resources[0].status.conditions is defined and
+    (access_grant_info.resources[0].status.conditions |
+     selectattr('type', 'equalto', 'Ready') |
+     selectattr('status', 'equalto', 'True') |
+     list |
+     length) > 0
+  retries: 10
+  delay: 10
+
+- name: Wait for Skupper router pods to be ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ namespace }}"
+  register: skupper_pods
+
+- name: Wait for all pods in the namespace to be in Running state
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ skupper_site_namespace }}"
+  register: skupper_pods
+  until: skupper_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == skupper_pods.resources | length
+  retries: 30
+  delay: 10
+
+- name: Extract AccessGrant details
+  ansible.builtin.set_fact:
+    access_grant_ca: "{{ access_grant_info.resources[0].status.ca }}"
+    access_grant_code: "{{ access_grant_info.resources[0].status.code }}"
+    access_grant_url: "{{ access_grant_info.resources[0].status.url }}"
+
+- name: Debug extracted AccessGrant details
+  ansible.builtin.debug:
+    msg: >
+      "AccessGrant details: {{ access_grant_ca }}" \n
+      "AccessGrant details: {{ access_grant_code }}" \n
+      "AccessGrant details: {{ access_grant_url }}"
+
+- name: Render AccessToken manifest from template
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ access_grant_token_template }}"
+    dest: "{{ access_token_file }}"
+    mode: '0644'
+
+- name: Copying AccessToken to /tmp
+  ansible.builtin.copy:
+    src: "{{ access_token_file }}"
+    dest: "{{ access_token }}"
+    mode: '0644'

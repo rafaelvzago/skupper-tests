@@ -1,0 +1,9 @@
+---
+apiVersion: skupper.io/v2alpha1
+kind: Connector
+metadata:
+  name: {{ expose_connector_metadata_name }}
+spec:
+  routingKey: {{ expose_connector_routing_key }}
+  port: {{ expose_connector_port }}
+  selector: {{ expose_connector_selector }}

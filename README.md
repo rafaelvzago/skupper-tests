@@ -1,204 +1,235 @@
-Here's an updated `README.md` for the `Skupper Tests Ansible Project`, taking into account the more detailed file structure provided.
+# Skupper Tests Ansible Project
+
+[![Apache License 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)  
+[![Latest Release](https://img.shields.io/github/v/release/skupperproject/skupper-tests)](https://github.com/skupperproject/skupper-tests/releases)
+
+## Overview
+
+This project provides a modular and scalable framework to test and manage Skupper environments using Ansible roles and scenarios. Each role targets a specific functionality in a Skupper-based architecture, offering flexibility, reliability, and adherence to Ansible best practices. The project includes detailed tests for every role to ensure a robust and maintainable solution.
 
 ---
 
-# Skupper Tests Ansible Project
+## Key Roles
 
-## Project Structure and Content
+### **1. `deploy_workload`**
+- **Purpose**: Deploy backend and frontend workloads in specified namespaces.
+- **Tests**: Verifies successful deployment and readiness of workloads in Kubernetes.
 
-This project directory is structured according to Ansible best practices, with organized roles, scenarios, and configurations that support modularity, scalability, and reusability. The layout is designed for effective configuration management and comprehensive testing of Skupper environments.
+### **2. `env_shakeout`**
+- **Purpose**: Validates and prepares the Kubernetes environment for Skupper operations.
+- **Tests**: Confirms cluster connectivity and ensures dependencies are available.
+
+### **3. `generate_namespaces`**
+- **Purpose**: Creates namespaces with specific naming conventions to segment workloads and services.
+- **Tests**: Validates namespace creation and ensures naming compliance.
+
+### **4. `install_skupper`**
+- **Purpose**: Installs Skupper by applying CRDs and deploying its controller.
+- **Tests**: Verifies the successful application of CRDs and controller readiness.
+
+### **5. `skupper_site`**
+- **Purpose**: Configures Skupper sites, including advanced settings like `linkAccess`.
+- **Tests**: Ensures manifests are applied correctly and that all pods are ready.
+
+### **6. `expose_connector`**
+- **Purpose**: Creates and deploys connectors for application routing in Skupper.
+- **Tests**: Validates connector configuration and functionality.
+
+### **7. `expose_service`**
+- **Purpose**: Exposes services in Kubernetes namespaces for external access.
+- **Tests**: Confirms service exposure and connectivity.
+
+### **8. `access_grant`**
+- **Purpose**: Manages access credentials for Skupper endpoints.
+- **Tests**: Validates access token generation and usage.
+
+### **9. `consume_service`**
+- **Purpose**: Configures listeners for consuming services via Skupper.
+- **Tests**: Ensures listener setup and service consumption.
+
+### **10. `link_site`**
+- **Purpose**: Establishes site links between Skupper instances.
+- **Tests**: Confirms successful link creation and connectivity.
+
+### **11. `install_skupper_controller`**
+- **Purpose**: Installs and configures the Skupper controller for advanced cluster settings.
+- **Tests**: Verifies controller setup and operational readiness.
+
+### **12. `teardown_test`**
+- **Purpose**: Cleans up namespaces and removes Skupper-related resources after testing.
+- **Tests**: Ensures proper cleanup and verifies resource deletion.
+
+### **13. `run_curl`**
+- **Purpose**: Runs a test to validate Skupper connectivity.
+- **Tests**: Validates Skupper connectivity and service availability.
+
+---
+
+## Folder Structure
 
 ```plaintext
-skupper-tests-playbook/
-|── ansible.cfg
-|── .ansible-lint
-|── ansible-navigator.yml
-|── collections/
-|   └── ansible_collections/
-|       └── rhsiqe/
-|           └── skupper/
-|               ├── galaxy.yml
-|               ├── README.md
-|               └── roles/
-|                   ├── deploy_workload/
-|                   │   ├── defaults/
-|                   │   │   └── main.yml
-|                   │   ├── README.md
-|                   │   └── tasks/
-|                   │       └── main.yml
-|                   ├── env_shakeout/
-|                   │   ├── defaults/
-|                   │   │   └── main.yml
-|                   │   ├── README.md
-|                   │   └── tasks/
-|                   │       └── main.yml
-|                   ├── generate_namespaces/
-|                   │   ├── defaults/
-|                   │   │   └── main.yml
-|                   │   ├── README.md
-|                   │   └── tasks/
-|                   │       └── main.yml
-|                   ├── install_skupper/
-|                   │   ├── defaults/
-|                   │   │   └── main.yml
-|                   │   ├── README.md
-|                   │   └── tasks/
-|                   │       └── main.yml
-|                   └── teardown_namespaces/
-|                       ├── defaults/
-|                       │   └── main.yml
-|                       ├── README.md
-|                       └── tasks/
-|                           └── main.yml
-|── scenarios/
-|   └── hello-world/
-|       ├── hello-world.bkp.yml
-|       ├── hello-world.yml
-|       └── inventory/
-|           ├── group_vars/
-|           │   └── all.yml
-|           ├── hosts.yml
-|           └── host_vars/
-|               ├── east.yml
-|               └── west.yml
-|── devfile.yaml
-|── .gitignore
-|── LICENSE
-|── Makefile
-|── README.md
-|── requirements.txt
+skupper-tests/
+├── ansible.cfg                  # Ansible configuration file
+├── Makefile                     # Automates tasks like dependency installation
+├── .ansible-lint                # Configuration for linting
+├── .gitignore                   # Git ignore rules
+├── LICENSE                      # License file
+├── README.md                    # Documentation for the project
+├── requirements.txt             # Python dependencies
+├── run_all_tests.sh             # Script to execute all tests
+├── scenarios/                   # Example scenarios like hello-world
+│   └── hello-world/ 
+│       ├── hello-world.yml      # Playbook for hello-world scenario
+│       └── inventory/           # Inventory for hello-world scenario
+│           ├── hosts.yml
+│           ├── group_vars/      # Group variables for hello-world scenario
+│           └── host_vars/
+├── test_results/                # Logs for test runs
+└── collections/
+    ├── ansible_collections/
+    │   └── rhsiqe/
+    │       └── skupper/
+    │           ├── galaxy.yml   # Metadata for the collection
+    │           ├── README.md    # Documentation for the collection
+    │           └── roles/
+    │               ├── access_grant/
+    │               ├── consume_service/
+    │               ├── deploy_workload/
+    │               ├── env_shakeout/
+    │               ├── expose_connector/
+    │               ├── expose_service/
+    │               ├── generate_namespaces/
+    │               ├── install_skupper/
+    │               ├── install_skupper_controller/
+    │               ├── link_site/
+    │               ├── run_curl_test/
+    │               ├── skupper_site/
+    │               └── teardown_test/
+    └── requirements.yml       # Collection dependencies
 ```
 
-## Key Files and Directories
+---
 
-- **`collections/requirements.yml`**: Specifies required Ansible collections, ensuring compatibility and reproducibility.
-- **`scenarios/hello-world/`**: Contains an example scenario with `inventory` and the `hello-world.yml` playbook for deploying and testing a Skupper setup.
-- **`roles/`**: Modular roles within `ansible_collections/rhsiqe/skupper/roles`, structured for reusability.
-- **`venv/`**: Directory for the Python virtual environment and dependencies.
-- **`ansible.cfg`**: Project-specific Ansible configurations.
-- **`requirements.yml`**: Lists required Ansible collections with versioning.
-- **`Makefile`**: Contains automation scripts for common tasks, simplifying project management.
+## Test Instructions
+
+### Running Role-Specific Tests
+
+Each role has its own test playbook, allowing independent testing. For example, to test the `access_grant` role:
+
+```bash
+ansible-playbook collections/ansible_collections/rhsiqe/skupper/roles/access_grant/tests/test_playbook.yml \
+  -i collections/ansible_collections/rhsiqe/skupper/roles/access_grant/tests/inventory/hosts.yml
+```
+
+The role tests will automatically invoke any dependent roles required to create the appropriate test scenario.
+
+---
+
+### Running All Tests
+
+Use the `make tests` command to run all tests in a logical order. This ensures the dependencies between roles are respected, and the environment is set up and torn down cleanly. The test script automatically logs results for review.
+
+#### Example:
+```bash
+make tests
+```
+
+The `run_all_tests.sh` script executes the roles in the following order:
+1. `env_shakeout`
+2. `generate_namespaces`
+3. `deploy_workload`
+4. `install_skupper`
+5. `install_skupper_controller`
+6. `skupper_site`
+7. `expose_connector`
+8. `consume_service`
+9. `access_grant`
+10. `link_site`
+11. `expose_service`
+12. `run_curl_test`
+
+Test logs are stored in the `test_results/` directory with timestamps.
+
+---
+
+## Usage Instructions
+
+### Installing Dependencies
+
+1. Install Python and Ansible dependencies:
+   ```bash
+   make build
+   ```
+2. Run the test suite:
+   ```bash
+   make tests
+   ```
+3. Review test results in the `test_results/` directory.
+
+### Running Example Scenarios
+
+Navigate to a scenario directory and execute the playbook. For example, to run the `hello-world` scenario:
+
+```bash
+ansible-playbook -i scenarios/hello-world/inventory/hosts.yml scenarios/hello-world/hello-world.yml
+```
+
+---
+
+## Scenario test hello-world
+
+This scenario deploys a simple frontend and backend application in separate namespaces. The frontend consumes the backend service via Skupper. And it uses all the roles in the collection. Use as guide to create your own scenarios.
+
+### Running the hello-world scenario
+
+1. After build the roles and collections, run the hello-world scenario:
+   ```bash
+   ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml
+   ```
+
+2. Running skipping skupper installation:
+   ```bash
+   ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml -e skip_skupper_install=true 
+   ```
+3. Running skipping teardown:
+   ```bash
+   ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml -e skip_teardown=true
+   ```
+
+### Debuging when needed (ensure that the teardown was skipped):
+   
+* The playbook creates a temporary folder under /tmp with the inventory name on it:
+
+```bash
+TASK [Set a unique temporary directory path per host] *********************************************************************************************************************************************************************************************
+task path: /home/rzago/Code/skupper-tests/scenarios/hello-world/hello-world.yml:4
+ok: [west] => {"ansible_facts": {"temp_dir_path": "/tmp/ansible.west"}, "changed": false}
+ok: [east] => {"ansible_facts": {"temp_dir_path": "/tmp/ansible.east"}, "changed": false}
+```
+
+Inside this folder you will find the logs and the inventory file used to run the playbook:
+
+```bash
+❯ ls -l /tmp/ansible.east
+total 8
+-rw-r--r--. 1 rzago rzago 143 Nov 24 16:41 connector-east.yml        # Connector file
+-rw-r--r--. 1 rzago rzago 113 Nov 24 16:41 skupper-site-east.yml     # Skupper site file
+❯ ls -l /tmp/ansible.west/
+total 16
+-rw-r--r--. 1 rzago rzago  132 Nov 24 16:41 access-grant-west.yml    # Access grant
+-rw-r--r--. 1 rzago rzago 1454 Nov 24 16:42 access-token-west.yml    # Access token file
+-rw-r--r--. 1 rzago rzago  134 Nov 24 16:41 consume-service-west.yml # Consume service file
+-rw-r--r--. 1 rzago rzago  141 Nov 24 16:41 skupper-site-west.yml    # Skupper site file
+```
+
 
 ## Compatibility
 
-This project has been tested with `ansible-lint >= 24.2.0` and is compatible with the latest stable version of `ansible-core`.
+- **Tested with**: `ansible-lint >= 24.2.0`
+- **Compatible with**: `ansible-core`
 
-## Building and Installing the Project
-
-To build and install the project:
-
-1. Clone the repository and navigate to the project directory.
-2. Run `make install` to install dependencies and required collections:
-
-   ```bash
-   make install
-   ```
-
-## Tagging the Collection Release and Pushing to GitHub
-
-To tag a new release and push to GitHub:
-
-1. Use the `make tag` command to automate the tagging and pushing process:
-
-   ```bash
-   make tag
-   ```
-
-2. Alternatively, you can manually tag and push:
-
-   ```bash
-   git tag -a x.y.z -m "Release x.y.z"
-   git push origin x.y.z
-   ```
-
-## Using the Collection in Playbooks
-
-To include this collection in other playbooks:
-
-1. Add the collection to your `requirements.yml`:
-
-   ```yaml
-   - name: rhsiqe.skupper
-     source: https://github.com/rafaelvzago/skupper-tests.git#collections/ansible_collections/rhsiqe/skupper
-     type: git
-     version: x.y.z
-   ```
-
-2. Reference the collection in your playbooks:
-
-   ```yaml
-   - hosts: localhost
-     collections:
-       - rhsiqe.skupper
-     tasks:
-       - name: Run the env_shakeout role
-         include_role:
-           name: env_shakeout
-       - name: Deploy the application
-         include_role:
-           name: deploy_workload
-   ```
-
-## Inventory Structure Explanation
-
-The **hello-world** scenario showcases a flexible inventory structure for multi-environment configuration. The inventory allows global, group, and host-specific variables.
-
-### `hello-world/hello-world.yml`
-
-This playbook calls the `env_shakeout` and `deploy_workload` roles to verify environment readiness and deploy the application.
-
-```yaml
 ---
-- name: Hello World test playbook
-  hosts: all
-  tasks:
-    - name: Checking the environment
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.env_shakeout
-    - name: Deploying the application
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.deploy_workload
-```
-
-### Inventory File Structure
-
-- **`group_vars/all.yml`**: Defines global variables for all hosts in the inventory. Sample configuration:
-
-  ```yaml
-  ansible_connection: local
-  ansible_user: rzago
-  images:
-    backend: quay.io/skupper/hello-world-backend
-    curl_image: quay.io/rzago/curl-telnet
-    frontend: quay.io/skupper/hello-world-frontend
-  kubeconfig: /home/rzago/.kube/ocp-minikube
-  debug: false
-  ```
-
-  - `ansible_connection`: Sets the connection type, here as `local` for local testing.
-  - `images`: Defines container images for different application components.
-  - `kubeconfig`: Specifies the Kubernetes configuration file path.
-
-- **`hosts.yml`**: Lists hosts (`west` and `east`) in the `all` group.
-
-  ```yaml
-  ---
-  all:
-    hosts:
-      west:
-      east:
-  ```
-
-- **`host_vars/east.yml` and `host_vars/west.yml`**: Customize host-specific configurations, such as `kubeconfig` paths or environment variables.
-
-  ```yaml
-  # Example for west host configuration
-  kubeconfig: /path/to/west/kubeconfig
-  ```
-
-This flexible structure allows cluster-specific configurations in `host_vars` while maintaining global settings in `group_vars`, enabling easy expansion for new clusters or environments.
 
 ## License
 
-This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for more details.
-
+This project is licensed under the Apache License 2.0. See the [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

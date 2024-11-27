@@ -1,0 +1,9 @@
+apiVersion: skupper.io/v2alpha1
+kind: AccessToken
+metadata:
+  name: {{ access_grant_name }}
+spec:
+  ca: |
+    {{ access_grant_ca.splitlines()|join('\n    ') }}
+  code: "{{ access_grant_code }}"
+  url: "{{ access_grant_url }}"

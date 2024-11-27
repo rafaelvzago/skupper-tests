@@ -1,0 +1,31 @@
+---
+# tasks file for consume_service
+
+- name: Set manifest file path
+  ansible.builtin.set_fact:
+    consume_service_file: "{{ consume_service_output_path }}/consume-service-{{ inventory_hostname }}.yml"
+    consume_service_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Delete Listener manifest if it exists
+  ansible.builtin.file:
+    path: "{{ consume_service_file }}"
+    state: absent
+  failed_when: false
+
+- name: Render Listener manifest from template
+  ansible.builtin.template:
+    src: "{{ consume_service_manifest_template }}"
+    dest: "{{ consume_service_file }}"
+    mode: '0644'
+
+- name: Apply Listener manifest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ consume_service_namespace }}"
+    state: "{{ consume_service_state }}"
+    src: "{{ consume_service_file }}"
+  register: consume_service_results
+
+- name: Debug applied results
+  ansible.builtin.debug:
+    var: consume_service_results

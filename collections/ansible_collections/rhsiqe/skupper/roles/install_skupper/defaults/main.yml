@@ -1,6 +1,5 @@
 # roles/install_skupper/defaults/main.yml
-install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git'
-install_skupper_skupper_branch: 'v2'
-install_skupper_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
-install_skupper_skupper_release_name: skupper-setup
-install_skupper_helm_install_scope: cluster
+install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git' # Skupper repository
+install_skupper_skupper_branch: 'v2'                                                # Skupper branch
+install_skupper_skupper_release_name: skupper-setup                                 # Skupper release name
+install_skupper_install_output_path: "/tmp/localhost"                               # Must be set in the playbook or inventory

@@ -1,0 +1,4 @@
+---
+# Kubeconfig path for west site
+kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
+
