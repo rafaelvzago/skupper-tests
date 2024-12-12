@@ -56,7 +56,7 @@ jobs:
       - name: Run All Role Tests
         run: |
           export KUBECONFIG=~/.kube/config
-          make
+          make hello
 
       # Archive Test Results
       - name: Upload Test Results
