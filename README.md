@@ -1,7 +1,7 @@
 # Skupper Tests - Ansible Project
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)  
-[![Latest Release](https://img.shields.io/github/v/tag/skupperproject/skupper-tests)](https://github.com/skupperproject/skupper-tests/tags)
+[![Latest Tag](https://img.shields.io/github/tag/skupperproject/skupper-tests.svg)](https://github.com/skupperproject/skupper-tests/tags)
 
 ## Overview
 
