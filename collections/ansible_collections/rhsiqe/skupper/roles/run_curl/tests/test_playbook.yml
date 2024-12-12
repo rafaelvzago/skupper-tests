@@ -1,20 +1,6 @@
-- name: Test playbook for the deploy_workload role
+- name: Hello World test playbook
   hosts: all
   tasks:
-    - name: Set a unique temporary directory path per host
-      ansible.builtin.set_fact:
-        temp_dir_path: "/tmp/ansible.{{ inventory_hostname }}"
-
-    - name: Ensure temporary directory exists per host
-      ansible.builtin.file:
-        path: "{{ temp_dir_path }}"
-        state: directory
-        mode: '0700'
-
-    - name: Printing the temporary directory to debug generated files
-      ansible.builtin.debug:
-        var: temp_dir_path
-
     - name: Calling the role to check the environment
       ansible.builtin.include_role:
         name: rhsiqe.skupper.env_shakeout
@@ -23,78 +9,10 @@
       ansible.builtin.include_role:
         name: rhsiqe.skupper.generate_namespaces
 
-    - name: Installing Skupper
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.install_skupper
-      when:
-        - not skip_skupper_install | default(false) | bool
-      vars:
-        install_skupper_install_output_path: "{{ temp_dir_path }}"
-
-    - name: Installing Skupper Controller
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.install_skupper_controller
-      when:
-        - not skip_skupper_controller_install | default(false) | bool
-
-    - name: Deploying backend and frontend
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.deploy_workload
-      vars:
-        deploy_workload_output_path: "{{ temp_dir_path }}"
-
-    - name: Creating Skupper sites
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.skupper_site
-      vars:
-        skupper_site_output_path: "{{ temp_dir_path }}"
-
-    - name: Exposing the connector at the backend at east site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.expose_connector
-      when:
-        - "'east' in inventory_hostname"
-      vars:
-        expose_connector_output_path: "{{ temp_dir_path }}"
-
-    - name: Consuming the service at the frontend at west site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.consume_service
-      when:
-        - "'west' in inventory_hostname"
-      vars:
-        consume_service_output_path: "{{ temp_dir_path }}"
-
-    - name: Granting access to the frontend at west site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.access_grant
-      when:
-        - "'west' in inventory_hostname"
-      vars:
-        access_grant_output_path: "{{ temp_dir_path }}"
-
-    - name: Exposing the service at the frontend at west site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.expose_service
-      when:
-        - "'west' in inventory_hostname"
-
-    - name: Linking east site to west site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.link_site
-      when:
-        - "'east' in inventory_hostname"
-
     - name: Testing the connectivity between the sites
       ansible.builtin.include_role:
         name: rhsiqe.skupper.run_curl
-      vars:
-        test_connectivity_output_path: "{{ temp_dir_path }}"
-      when:
-        - "'west' in inventory_hostname"
 
     - name: Deleting the test resources
       ansible.builtin.include_role:
         name: rhsiqe.skupper.teardown_test
-      when:
-        - not skip_teardown | default(false) | bool

@@ -3,3 +3,4 @@ ansible_connection: local
 ansible_user: rzago
 debug: false
 namespace_prefix: zago
+site_access_token_path: ""
