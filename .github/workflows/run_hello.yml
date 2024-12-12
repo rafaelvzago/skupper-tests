@@ -53,7 +53,7 @@ jobs:
           ansible-galaxy collection install -r collections/requirements.yml
 
       # Run Tests
-      - name: Run All Role Tests
+      - name: Run Hello World Test
         run: |
           export KUBECONFIG=~/.kube/config
           make hello
