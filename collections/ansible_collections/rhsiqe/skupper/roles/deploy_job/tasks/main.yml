@@ -1,0 +1,40 @@
+# roles/deploy_job/tasks/main.yml
+---
+- name: Set fact for namespace
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+
+- name: Deploy job in the specified namespace with specific command
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: "{{ deploy_job_job_name }}"
+        namespace: "{{ namespace }}"
+      spec:
+        template:
+          spec:
+            containers:
+              - name: "{{ deploy_job_job_name }}"
+                image: "{{ deploy_job_job_image }}"
+                command: "{{ deploy_job_job_command.split() }}"
+            dnsPolicy: "{{ deploy_job_dns_policy }}"
+            restartPolicy: "{{ deploy_job_restart_policy }}"
+
+- name: Wait for job to be ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ namespace }}"
+  register: job_pods
+  until: job_pods.resources | map(attribute='status.phase') | select('equalto', 'Succeeded') | list | length > 0
+  retries: 30
+  delay: 10
+
+- name: Display pods
+  ansible.builtin.debug:
+    msg: "{{ job_pods.resources | map(attribute='metadata.name') | list }}"
