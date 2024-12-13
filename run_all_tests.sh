@@ -17,6 +17,7 @@ mkdir -p "$RESULTS_DIR"
 ROLE_ORDER=(
   "env_shakeout"
   "generate_namespaces"
+  "deploy_job"
   "deploy_workload"
   "install_skupper"
   "skupper_site"
