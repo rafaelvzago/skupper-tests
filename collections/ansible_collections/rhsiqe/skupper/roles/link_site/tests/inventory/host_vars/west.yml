@@ -20,12 +20,12 @@ deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
 deploy_workload_deployment_name: "frontend"
 
 # Consume service configuration
-consume_service_metadata_name: "backend"
-consume_service_routing_key: "backend"
-consume_service_port: 8080
-consume_service_host: "backend"
-consume_service_manifest_template: "listener.yml.j2"
-consume_service_state: present
+create_listener_metadata_name: "backend"
+create_listener_routing_key: "backend"
+create_listener_port: 8080
+create_listener_host: "backend"
+create_listener_manifest_template: "listener.yml.j2"
+create_listener_state: present
 
 # Access grant configuration
 access_grant_name: my-grant
