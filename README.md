@@ -43,7 +43,7 @@ This project provides a modular and scalable framework to test and manage Skuppe
 - **Purpose**: Manages access credentials for Skupper endpoints.
 - **Tests**: Validates access token generation and usage.
 
-### **9. `consume_service`**
+### **9. `create_listener`**
 - **Purpose**: Configures listeners for consuming services via Skupper.
 - **Tests**: Ensures listener setup and service consumption.
 
@@ -93,7 +93,7 @@ skupper-tests/
     │           ├── README.md    # Documentation for the collection
     │           └── roles/
     │               ├── access_grant/
-    │               ├── consume_service/
+    │               ├── create_listener/
     │               ├── deploy_workload/
     │               ├── env_shakeout/
     │               ├── create_connector/
@@ -142,7 +142,7 @@ The `run_all_tests.sh` script executes the roles in the following order:
 5. `install_skupper_controller`
 6. `skupper_site`
 7. `create_connector`
-8. `consume_service`
+8. `create_listener`
 9. `access_grant`
 10. `link_site`
 11. `expose_service`

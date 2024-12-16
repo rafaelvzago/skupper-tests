@@ -21,11 +21,11 @@ skupper_site_manifest_template: "skupper-site.yml.j2"
 
 
 # Consume service configuration
-consume_service_metadata_name: "backend"
-consume_service_routing_key: "backend"
-consume_service_port: 8080
-consume_service_host: "backend"
-consume_service_state: present
+create_listener_metadata_name: "backend"
+create_listener_routing_key: "backend"
+create_listener_port: 8080
+create_listener_host: "backend"
+create_listener_state: present
 
 # Access grant configuration
 access_grant_name: hello-world-grant

@@ -21,7 +21,7 @@ ROLE_ORDER=(
   "install_skupper"
   "skupper_site"
   "create_connector"
-  "consume_service"
+  "create_listener"
   "access_grant"
   "link_site"
   "expose_service"
