@@ -31,7 +31,7 @@ The collection includes the following roles:
 7. **`access_grant`**: Manages access tokens for Skupper endpoints.
 8. **`consume_service`**: Configures listeners for consuming services via Skupper.
 9. **`link_site`**: Establishes site links between Skupper instances.
-10. **`install_skupper_controller`**: Installs the Skupper controller for cluster-wide configuration.
+10. **`host_setup`**: Prepares hosts for Skupper deployment.
 11. **`teardown_test`**: Cleans up Skupper resources and namespaces after testing.
 12. **`expose_service`**: Exposes services in Kubernetes namespaces.
 13. **`run_curl_test`**: Runs a test to validate Skupper connectivity.
