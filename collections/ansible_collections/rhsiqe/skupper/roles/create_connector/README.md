@@ -1,4 +1,4 @@
-# Role: expose_connector
+# Role: create_connector
 
 This Ansible role automates the creation and management of `Connector` resources in a Kubernetes cluster using the Skupper API. It generates a manifest for the `Connector` resource based on a template, applies it to the target namespace, and optionally debugs the results.
 
@@ -26,13 +26,13 @@ This Ansible role automates the creation and management of `Connector` resources
 
 | Variable                           | Default Value                 | Description                                                                 |
 |------------------------------------|-------------------------------|-----------------------------------------------------------------------------|
-| `expose_connector_routing_key`     | `backend`                     | Routing key for the `Connector`.                                            |
-| `expose_connector_metadata_name`   | `backend`                     | Metadata name for the `Connector`.                                          |
-| `expose_connector_port`            | `8080`                        | Port for the `Connector`.                                                  |
-| `expose_connector_selector`        | `app=backend`                 | Selector for the `Connector`.                                              |
-| `expose_connector_manifest_template` | `connector.yml.j2`           | Jinja2 template for the `Connector` manifest.                              |
-| `expose_connector_state`           | `present`                     | Desired state of the resource (`present` or `absent`).                      |
-| `expose_connector_output_path`     | `/tmp/localhost`              | Directory where the manifest file will be stored.                          |
+| `create_connector_routing_key`     | `backend`                     | Routing key for the `Connector`.                                            |
+| `create_connector_metadata_name`   | `backend`                     | Metadata name for the `Connector`.                                          |
+| `create_connector_port`            | `8080`                        | Port for the `Connector`.                                                  |
+| `create_connector_selector`        | `app=backend`                 | Selector for the `Connector`.                                              |
+| `create_connector_manifest_template` | `connector.yml.j2`           | Jinja2 template for the `Connector` manifest.                              |
+| `create_connector_state`           | `present`                     | Desired state of the resource (`present` or `absent`).                      |
+| `create_connector_output_path`     | `/tmp/localhost`              | Directory where the manifest file will be stored.                          |
 | `namespace_prefix`                 |                               | Prefix for the Kubernetes namespace.                                        |
 | `namespace_name`                   |                               | Name of the Kubernetes namespace.                                           |
 | `kubeconfig`                       |                               | Path to the kubeconfig file for cluster access.                             |
@@ -46,14 +46,14 @@ This Ansible role automates the creation and management of `Connector` resources
   tasks:
     - name: Expose a backend connector
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.expose_connector
+        name: rhsiqe.skupper.create_connector
       vars:
         namespace_prefix: "skupper"
         namespace_name: "east"
-        expose_connector_routing_key: "frontend"
-        expose_connector_metadata_name: "frontend-connector"
-        expose_connector_port: 9090
-        expose_connector_selector: "app=frontend"
+        create_connector_routing_key: "frontend"
+        create_connector_metadata_name: "frontend-connector"
+        create_connector_port: 9090
+        create_connector_selector: "app=frontend"
 ```
 
 ### Inventory (host_vars)
@@ -77,7 +77,7 @@ namespace_name: "west"
 ## Notes
 
 - The namespace is derived as `<namespace_prefix>-<namespace_name>`.
-- The generated manifest file is stored in the `expose_connector_output_path` directory, named according to the inventory host.
+- The generated manifest file is stored in the `create_connector_output_path` directory, named according to the inventory host.
 - Ensure the `kubernetes.core.k8s` module is installed to use this role.
 
 ## License

@@ -19,11 +19,11 @@ install_skupper_install_output_path: ""
 # Installation of skupeer controller
 install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
 
-# defaults file for expose_connector
-expose_connector_routing_key: backend  # The routing key to use
-expose_connector_metadata_name: backend  # Metadata name for the connector
-expose_connector_port: 8080  # Port for the connector
-expose_connector_selector: app=backend  # Selector for the connector
-expose_connector_manifest_template: "connector.yml.j2"  # Path to the Jinja2 template for the manifest
-expose_connector_state: present  # Desired state of the resource (e.g., present, absent)
-expose_connector_output_path: ""  # Path to write the manifest file
+# defaults file for create_connector
+create_connector_routing_key: backend  # The routing key to use
+create_connector_metadata_name: backend  # Metadata name for the connector
+create_connector_port: 8080  # Port for the connector
+create_connector_selector: app=backend  # Selector for the connector
+create_connector_manifest_template: "connector.yml.j2"  # Path to the Jinja2 template for the manifest
+create_connector_state: present  # Desired state of the resource (e.g., present, absent)
+create_connector_output_path: ""  # Path to write the manifest file

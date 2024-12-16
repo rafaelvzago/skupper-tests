@@ -31,7 +31,7 @@ This project provides a modular and scalable framework to test and manage Skuppe
 - **Purpose**: Configures Skupper sites, including advanced settings like `linkAccess`.
 - **Tests**: Ensures manifests are applied correctly and that all pods are ready.
 
-### **6. `expose_connector`**
+### **6. `create_connector`**
 - **Purpose**: Creates and deploys connectors for application routing in Skupper.
 - **Tests**: Validates connector configuration and functionality.
 
@@ -96,7 +96,7 @@ skupper-tests/
     │               ├── consume_service/
     │               ├── deploy_workload/
     │               ├── env_shakeout/
-    │               ├── expose_connector/
+    │               ├── create_connector/
     │               ├── expose_service/
     │               ├── generate_namespaces/
     │               ├── install_skupper/
@@ -141,7 +141,7 @@ The `run_all_tests.sh` script executes the roles in the following order:
 4. `install_skupper`
 5. `install_skupper_controller`
 6. `skupper_site`
-7. `expose_connector`
+7. `create_connector`
 8. `consume_service`
 9. `access_grant`
 10. `link_site`

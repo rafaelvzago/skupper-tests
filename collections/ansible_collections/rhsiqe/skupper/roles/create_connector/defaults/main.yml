@@ -1,0 +1,9 @@
+---
+# defaults file for create_connector
+create_connector_routing_key: backend                 # The routing key to use
+create_connector_metadata_name: backend               # Metadata name for the connector
+create_connector_port: 8080                           # Port for the connector
+create_connector_selector: app=backend                # Selector for the connector
+create_connector_manifest_template: connector.yml.j2  # Path to the Jinja2 template for the manifest
+create_connector_state: present                       # Desired state of the resource (e.g., present, absent)
+create_connector_output_path: "/tmp/localhost"        # Path to write the manifest file
