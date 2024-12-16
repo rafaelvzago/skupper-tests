@@ -14,4 +14,4 @@ test:
 	@./run_all_tests.sh
 
 hello:
-	@ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml -e skip_teardown=true
+	@ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml
