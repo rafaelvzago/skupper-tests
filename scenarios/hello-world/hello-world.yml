@@ -1,25 +1,35 @@
+---
+- name: Host Setup
+  hosts: localhost
+  tasks:
+    - name: Host Setup
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.host_setup
+      when:
+        - not skip_host_setup | default(false) | bool
+
 - name: Hello World test playbook
   hosts: all
   tasks:
-    - name: Set a unique temporary directory path per host
+    - name: Setting the temporary directory path
       ansible.builtin.set_fact:
         temp_dir_path: "/tmp/ansible.{{ inventory_hostname }}"
 
-    - name: Ensure temporary directory exists per host
+    - name: Creating the temporary directory
       ansible.builtin.file:
         path: "{{ temp_dir_path }}"
         state: directory
         mode: '0700'
 
-    - name: Printing the temporary directory to debug generated files
+    - name: Debugging the temporary directory path
       ansible.builtin.debug:
         var: temp_dir_path
 
-    - name: Calling the role to check the environment
+    - name: Environment shakeout
       ansible.builtin.include_role:
         name: rhsiqe.skupper.env_shakeout
 
-    - name: Calling the role to generate the namespaces
+    - name: Generating the namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.generate_namespaces
 
@@ -30,12 +40,6 @@
         - not skip_skupper_install | default(false) | bool
       vars:
         install_skupper_install_output_path: "{{ temp_dir_path }}"
-
-    - name: Installing Skupper Controller
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.install_skupper_controller
-      when:
-        - not skip_skupper_controller_install | default(false) | bool
 
     - name: Deploying backend and frontend
       ansible.builtin.include_role:
@@ -49,13 +53,13 @@
       vars:
         skupper_site_output_path: "{{ temp_dir_path }}"
 
-    - name: Exposing the connector at the backend at east site
+    - name: Creating connector at east site
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.expose_connector
+        name: rhsiqe.skupper.create_connector
       when:
         - "'east' in inventory_hostname"
       vars:
-        expose_connector_output_path: "{{ temp_dir_path }}"
+        create_connector_output_path: "{{ temp_dir_path }}"
 
     - name: Consuming the service at the frontend at west site
       ansible.builtin.include_role:

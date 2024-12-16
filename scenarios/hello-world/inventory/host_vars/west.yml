@@ -19,8 +19,6 @@ skupper_site_include_spec: true
 skupper_site_link_access: default
 skupper_site_manifest_template: "skupper-site.yml.j2"
 
-# Installation of skupeer controller
-install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
 
 # Consume service configuration
 consume_service_metadata_name: "backend"

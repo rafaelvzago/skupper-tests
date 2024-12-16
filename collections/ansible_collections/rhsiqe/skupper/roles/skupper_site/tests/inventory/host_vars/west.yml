@@ -11,9 +11,6 @@ install_skupper_skupper_branch: 'v2'
 install_skupper_skupper_release_name: skupper-setup
 install_skupper_install_output_path: ""
 
-# Installation of skupeer controller
-install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
-
 # Skupper site configuration
 skupper_site_include_spec: true
 skupper_site_link_access: default

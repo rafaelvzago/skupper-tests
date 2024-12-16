@@ -24,12 +24,6 @@
       vars:
         install_skupper_install_output_path: "{{ temp_dir_path }}"
 
-    - name: Installing Skupper Controller
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.install_skupper_controller
-      when:
-        - not skip_skupper_controller_install | default(false) | bool
-
     - name: Deploying backend and frontend
       ansible.builtin.include_role:
         name: rhsiqe.skupper.deploy_workload
@@ -42,13 +36,13 @@
       vars:
         skupper_site_output_path: "{{ temp_dir_path }}"
 
-    - name: Exposing the connector at the backend at east site
+    - name: Creating connector at east site
       ansible.builtin.include_role:
-        name: rhsiqe.skupper.expose_connector
+        name: rhsiqe.skupper.create_connector
       when:
         - "'east' in inventory_hostname"
       vars:
-        expose_connector_output_path: "{{ temp_dir_path }}"
+        create_connector_output_path: "{{ temp_dir_path }}"
 
     - name: Consuming the service at the frontend at west site
       ansible.builtin.include_role:

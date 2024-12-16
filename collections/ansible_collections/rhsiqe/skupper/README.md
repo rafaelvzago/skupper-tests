@@ -27,7 +27,7 @@ The collection includes the following roles:
 3. **`generate_namespaces`**: Creates namespaces with defined naming conventions.
 4. **`install_skupper`**: Installs Skupper by applying CRDs and its controller.
 5. **`skupper_site`**: Configures Skupper sites with advanced settings.
-6. **`expose_connector`**: Deploys connectors for application routing.
+6. **`create_connector`**: Deploys connectors for application routing.
 7. **`access_grant`**: Manages access tokens for Skupper endpoints.
 8. **`consume_service`**: Configures listeners for consuming services via Skupper.
 9. **`link_site`**: Establishes site links between Skupper instances.
