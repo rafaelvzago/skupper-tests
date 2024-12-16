@@ -1,6 +1,7 @@
 ROOT_PATH := $(shell pwd)
 COLLECTION_PATH := $(ROOT_PATH)/collections/ansible_collections/rhsiqe/skupper
-TAR_NAME := rhsiqe-skupper-0.1.1.tar.gz
+LATEST_TAG := $(shell git describe --tags --abbrev=0)
+TAR_NAME := rhsiqe-skupper-$(LATEST_TAG).tar.gz
 TAR_PATH := $(COLLECTION_PATH)/$(TAR_NAME)
 
 build:
