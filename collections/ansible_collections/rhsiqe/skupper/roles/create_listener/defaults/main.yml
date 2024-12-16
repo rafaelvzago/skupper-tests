@@ -1,0 +1,9 @@
+---
+# Defaults for create_listener role
+create_listener_metadata_name: "backend"              # Default name of the Listener
+create_listener_routing_key: "backend"                # Default routing key
+create_listener_port: 8080                            # Default port
+create_listener_host: "backend"                       # Default host
+create_listener_manifest_template: "listener.yml.j2"  # Jinja2 template for Listener
+create_listener_state: present                        # Desired state (e.g., present or absent)
+create_listener_output_path: "/tmp/localhost"          # Path to write the manifest file

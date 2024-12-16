@@ -1,0 +1,9 @@
+---
+apiVersion: skupper.io/v2alpha1
+kind: Listener
+metadata:
+  name: {{ create_listener_metadata_name }}
+spec:
+  routingKey: {{ create_listener_routing_key }}
+  port: {{ create_listener_port }}
+  host: {{ create_listener_host }}

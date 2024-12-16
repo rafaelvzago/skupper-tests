@@ -1,0 +1,31 @@
+---
+# tasks file for create_listener
+
+- name: Set manifest file path
+  ansible.builtin.set_fact:
+    create_listener_file: "{{ create_listener_output_path }}/consume-service-{{ inventory_hostname }}.yml"
+    create_listener_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Delete Listener manifest if it exists
+  ansible.builtin.file:
+    path: "{{ create_listener_file }}"
+    state: absent
+  failed_when: false
+
+- name: Render Listener manifest from template
+  ansible.builtin.template:
+    src: "{{ create_listener_manifest_template }}"
+    dest: "{{ create_listener_file }}"
+    mode: '0644'
+
+- name: Apply Listener manifest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ create_listener_namespace }}"
+    state: "{{ create_listener_state }}"
+    src: "{{ create_listener_file }}"
+  register: create_listener_results
+
+- name: Debug applied results
+  ansible.builtin.debug:
+    var: create_listener_results
