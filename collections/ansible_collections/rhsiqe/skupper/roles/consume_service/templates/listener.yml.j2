@@ -1,9 +1,0 @@
----
-apiVersion: skupper.io/v2alpha1
-kind: Listener
-metadata:
-  name: {{ consume_service_metadata_name }}
-spec:
-  routingKey: {{ consume_service_routing_key }}
-  port: {{ consume_service_port }}
-  host: {{ consume_service_host }}

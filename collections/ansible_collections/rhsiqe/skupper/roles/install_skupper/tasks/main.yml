@@ -11,25 +11,32 @@
     version: "{{ install_skupper_skupper_branch }}"
     update: true
 
-- name: Find CRDs in the directory
-  ansible.builtin.find:
-    paths: "{{ skupper_folder }}/api/types/crds/"
-    patterns: "*.yaml"
-  register: crd_files
+- name: Install Skupper using Helm
+  kubernetes.core.helm:
+    chart_ref: "{{ skupper_folder }}/charts/skupper-setup"
+    name: "{{ install_skupper_skupper_release_name }}"
+    namespace: "{{ skupper_namespace | default('default') }}"
+    wait: true
+    replace: false
+    values:
+      scope: "cluster"
+  ignore_errors: true
 
-- name: Debug CRDs found
-  ansible.builtin.debug:
-    var: crd_files.files
-
-- name: Install Skupper by applying CRDs
-  kubernetes.core.k8s:
+- name: Validate Skupper controller pod status
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: skupper
     kubeconfig: "{{ kubeconfig }}"
-    state: present
-    src: "{{ item.path }}"
-  loop: "{{ crd_files.files }}"
-  loop_control:
-    label: "{{ item.path }}"
-  failed_when: false
+  register: skupper_pods_info
+  retries: 30
+  delay: 5
+  until:
+    - skupper_pods_info is defined
+    - skupper_pods_info.resources is defined
+    - (skupper_pods_info.resources | selectattr('metadata.name', 'regex', 'skupper-controller') | list | length) > 0
+    - (skupper_pods_info.resources | selectattr('metadata.name', 'regex', 'skupper-controller') | selectattr('status.phase', '==', 'Running') | list | length) > 0
+  failed_when: false  # This will prevent the task from failing if conditions are not met
 
 - name: Clean up Skupper repository directory
   ansible.builtin.file:

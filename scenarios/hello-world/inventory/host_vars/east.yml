@@ -8,7 +8,6 @@ namespace_name: hello-world-east
 # Installation configuration for Skupper
 install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git'
 install_skupper_skupper_branch: 'v2'
-install_skupper_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
 install_skupper_skupper_release_name: skupper-setup
 
 # Deployment configuration for workload
@@ -20,14 +19,11 @@ deploy_workload_replicas: 3
 skupper_site_include_spec: false
 
 # Expose connector configuration
-expose_connector_routing_key: backend
-expose_connector_metadata_name: backend
-expose_connector_port: 8080
-expose_connector_selector: app=backend
-expose_connector_state: present
-
-# Installation of skupeer controller
-install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
+create_connector_routing_key: backend
+create_connector_metadata_name: backend
+create_connector_port: 8080
+create_connector_selector: app=backend
+create_connector_state: present
 
 # Access grant configuration
 access_grant_name: hello-world-grant

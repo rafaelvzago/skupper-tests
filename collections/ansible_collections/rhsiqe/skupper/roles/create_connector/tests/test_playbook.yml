@@ -1,5 +1,5 @@
 ---
-- name: Test playbook for the access_grant role
+- name: Test playbook for the create_connector role
   hosts: all
   tasks:
     - name: Set a unique temporary directory path per host
@@ -12,15 +12,14 @@
         state: directory
         mode: '0700'
 
-    - name: Calling the role to generate the namespaces
+    - name: Include the role to generate the namespaces
       ansible.builtin.include_role:
         name: rhsiqe.skupper.generate_namespaces
+      register: generate_namespaces_result
 
-    - name: Installing Skupper
+    - name: Include the role to install Skupper
       ansible.builtin.include_role:
         name: rhsiqe.skupper.install_skupper
-      when:
-        - not skip_skupper_install | default(false) | bool
       vars:
         install_skupper_install_output_path: "{{ temp_dir_path }}"
 
@@ -43,22 +42,6 @@
         - "'east' in inventory_hostname"
       vars:
         create_connector_output_path: "{{ temp_dir_path }}"
-
-    - name: Creating listener at the frontend west site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.create_listener
-      when:
-        - "'west' in inventory_hostname"
-      vars:
-        create_listener_output_path: "{{ temp_dir_path }}"
-
-    - name: Granting access to the frontend at west site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.access_grant
-      when:
-        - "'west' in inventory_hostname"
-      vars:
-        access_grant_output_path: "{{ temp_dir_path }}"
 
     - name: Include role to delete test artifacts
       ansible.builtin.include_role:

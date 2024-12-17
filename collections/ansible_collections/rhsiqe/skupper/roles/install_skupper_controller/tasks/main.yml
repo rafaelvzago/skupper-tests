@@ -1,9 +1,0 @@
----
-# tasks file for collections/ansible_collections/rhsiqe/skupper/roles/install_skupper_controller
-- name: Install the Skupper Controller
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    state: present
-    src: "{{ install_skupper_controller_skupper_controller_manifest }}"
-  register: skupper_controller_results
-  failed_when: false

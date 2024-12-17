@@ -1,5 +1,5 @@
 ---
-- name: Test playbook for the access_grant role
+- name: Test playbook for the create_listener role
   hosts: all
   tasks:
     - name: Set a unique temporary directory path per host
@@ -51,14 +51,6 @@
         - "'west' in inventory_hostname"
       vars:
         create_listener_output_path: "{{ temp_dir_path }}"
-
-    - name: Granting access to the frontend at west site
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.access_grant
-      when:
-        - "'west' in inventory_hostname"
-      vars:
-        access_grant_output_path: "{{ temp_dir_path }}"
 
     - name: Include role to delete test artifacts
       ansible.builtin.include_role:

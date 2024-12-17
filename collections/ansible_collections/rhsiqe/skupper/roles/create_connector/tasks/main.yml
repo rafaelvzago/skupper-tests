@@ -1,0 +1,31 @@
+---
+# tasks file for create_connector
+#
+- name: Set manifest file path for connector
+  ansible.builtin.set_fact:
+    create_connector_file: "{{ create_connector_output_path }}/connector-{{ inventory_hostname }}.yml"
+    create_connector_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+
+- name: Delete existing connector manifest if present
+  ansible.builtin.file:
+    path: "{{ create_connector_file }}"
+    state: absent
+  failed_when: false
+
+- name: Render connector manifest from template
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ create_connector_manifest_template }}"
+    dest: "{{ create_connector_file }}"
+    mode: '0644'
+
+- name: Apply connector manifest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ create_connector_namespace }}"
+    state: "{{ create_connector_state }}"
+    src: "{{ create_connector_file }}"
+  register: create_connector_results
+
+- name: Debug connector application results
+  ansible.builtin.debug:
+    var: create_connector_results

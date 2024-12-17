@@ -23,10 +23,6 @@
       vars:
         install_skupper_install_output_path: "{{ temp_dir_path }}"
 
-    - name: Installing Skupper Controller
-      ansible.builtin.include_role:
-        name: rhsiqe.skupper.install_skupper_controller
-
     - name: Creating Skupper sites
       ansible.builtin.include_role:
         name: rhsiqe.skupper.skupper_site

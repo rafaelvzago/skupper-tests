@@ -1,6 +1,6 @@
 ROOT_PATH := $(shell pwd)
 COLLECTION_PATH := $(ROOT_PATH)/collections/ansible_collections/rhsiqe/skupper
-TAR_NAME := rhsiqe-skupper-0.1.1.tar.gz
+TAR_NAME := rhsiqe-skupper-0.1.3.tar.gz
 TAR_PATH := $(COLLECTION_PATH)/$(TAR_NAME)
 
 build:
@@ -14,4 +14,4 @@ test:
 	@./run_all_tests.sh
 
 hello:
-	@ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml -e skip_teardown=true
+	@ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml

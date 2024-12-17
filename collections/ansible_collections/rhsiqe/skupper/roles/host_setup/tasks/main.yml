@@ -1,0 +1,7 @@
+---
+# tasks file for collections/ansible_collections/rhsiqe/skupper/roles/host_setup
+- name: Install helm
+  become: true
+  ansible.builtin.package:
+    name: helm
+    state: present
