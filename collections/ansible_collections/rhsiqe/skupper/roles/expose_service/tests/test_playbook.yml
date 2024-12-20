@@ -1,6 +1,8 @@
 ---
 - name: Test playbook for the expose_service role
   hosts: all
+  roles:
+  - rhsiqe.skupper.skupper_test_images
   tasks:
     - name: Set a unique temporary directory path per host
       ansible.builtin.set_fact:

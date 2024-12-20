@@ -1,6 +1,8 @@
 ---
 - name: Host Setup
   hosts: localhost
+  roles:
+  - rhsiqe.skupper.skupper_test_images
   tasks:
     - name: Host Setup
       ansible.builtin.include_role:
