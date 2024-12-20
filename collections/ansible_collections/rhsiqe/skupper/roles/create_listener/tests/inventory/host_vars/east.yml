@@ -15,7 +15,7 @@ install_skupper_install_output_path: ""
 install_skupper_controller_skupper_controller_manifest: 'https://raw.githubusercontent.com/skupperproject/skupper/v2/cmd/controller/deploy_cluster_scope.yaml'
 
 # Deployment configuration for workload
-deploy_workload_workload_image: quay.io/skupper/hello-world-backend:latest
+deploy_workload_workload_image: "{{ skupper_test_image_hello_world_backend }}"
 deploy_workload_deployment_name: "backend"
 deploy_workload_replicas: 1
 deploy_workload_output_path: "" # Must be set in the playbook or inventory

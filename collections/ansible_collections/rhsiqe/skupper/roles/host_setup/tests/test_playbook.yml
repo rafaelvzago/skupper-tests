@@ -1,6 +1,8 @@
 ---
 - name: Test playbook host setup
   hosts: all
+  roles:
+  - rhsiqe.skupper.skupper_test_images
   tasks:
     - name: Include the role to host setup
       ansible.builtin.include_role:

@@ -1,0 +1,15 @@
+
+- hosts: localhost
+  gather_facts: no
+  roles:
+  - rhsiqe.skupper.skupper_test_images
+  tasks:
+  - name: show value
+    debug:
+      var: skupper_test_image_hello_world_frontend
+  - name: check skupper_test_image_hello_world_frontend
+    fail:
+      msg: Value of skupper_test_image_hello_world_frontend ("{{ skupper_test_image_hello_world_frontend }}") unexpected
+    when: |
+      ( lookup("env", "SKUPPER_TEST_IMAGE_HELLO_WORLD_FRONTEND") == "" and skupper_test_image_hello_world_frontend != "quay.io/skupper/hello-world-frontend:latest" ) or
+      ( lookup("env", "SKUPPER_TEST_IMAGE_HELLO_WORLD_FRONTEND") != "" and skupper_test_image_hello_world_frontend != lookup("env", "SKUPPER_TEST_IMAGE_HELLO_WORLD_FRONTEND") )

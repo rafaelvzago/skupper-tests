@@ -16,7 +16,7 @@ skupper_site_link_access: default
 skupper_site_manifest_template: "skupper-site.yml.j2"
 
 # Deployment configuration for workload
-deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
+deploy_workload_workload_image: "{{ skupper_test_image_hello_world_frontend }}"
 deploy_workload_deployment_name: "frontend"
 
 # Consume service configuration

@@ -21,7 +21,7 @@ skupper_site_manifest_template: "skupper-site.yml.j2"
 skupper_site_output_path: "" # Must be set in the playbook or inventory
 
 # Deployment configuration for workload
-deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
+deploy_workload_workload_image: "{{ skupper_test_image_hello_world_frontend }}"
 deploy_workload_deployment_name: "frontend"
 deploy_workload_output_path: "" # Must be set in the playbook or inventory
 

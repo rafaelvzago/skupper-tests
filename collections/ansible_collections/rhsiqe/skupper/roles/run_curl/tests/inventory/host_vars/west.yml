@@ -6,13 +6,13 @@ kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
 namespace_name: hello-world-west
 
 # Deployment configuration for workload
-deploy_workload_workload_image: quay.io/rzago/lanyard:latest
+deploy_workload_workload_image: "{{ skupper_test_image_lanyard }}"
 deploy_workload_deployment_name: "frontend"
 
 # Run curl configuration
 run_curl_namespace: default
 run_curl_address: "https://fakestoreapi.com/products/1"
-run_curl_image: "quay.io/rzago/lanyard:latest"
+run_curl_image: "{{ skupper_test_image_lanyard }}"
 run_curl_pod_name: curl-test
 run_curl_retries: 10
 run_curl_delay: 10

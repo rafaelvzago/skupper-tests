@@ -11,7 +11,7 @@ install_skupper_skupper_branch: 'v2'
 install_skupper_skupper_release_name: skupper-setup
 
 # Deployment configuration for workload
-deploy_workload_workload_image: quay.io/skupper/hello-world-frontend:latest
+deploy_workload_workload_image: "{{ skupper_test_image_hello_world_frontend }}"
 deploy_workload_deployment_name: "frontend"
 
 # Skupper site configuration
@@ -45,7 +45,7 @@ link_site_skip_connector_check: true
 # Run curl configuration
 run_curl_namespace: default
 run_curl_address: "backend:8080/api/hello"
-run_curl_image: "quay.io/rzago/lanyard:latest"
+run_curl_image: "{{ skupper_test_image_lanyard }}"
 run_curl_pod_name: curl-test
 run_curl_retries: 10
 run_curl_delay: 10
