@@ -6,6 +6,6 @@ kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
 namespace_name: hello-world-west
 
 # Deployment configuration for job
-deploy_job_job_image: quay.io/skupper/hello-world-frontend:latest
+deploy_job_job_image: "{{ skupper_test_image_hello_world_frontend }}"
 deploy_job_job_name: "frontend"
 deploy_job_job_command: "ls"

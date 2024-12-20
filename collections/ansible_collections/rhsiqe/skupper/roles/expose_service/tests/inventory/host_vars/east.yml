@@ -6,6 +6,6 @@ kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
 namespace_name: hello-world-east
 
 # Deployment configuration for workload
-deploy_workload_workload_image: quay.io/skupper/hello-world-backend:latest
+deploy_workload_workload_image: "{{ skupper_test_image_hello_world_backend }}"
 deploy_workload_deployment_name: "backend"
 deploy_workload_replicas: 3

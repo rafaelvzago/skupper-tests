@@ -1,8 +1,8 @@
 # roles/deploy_job/defaults/main.yml
-deploy_job_namespace_name: default                      # Namespace where the job will be deployed
-deploy_job_job_name: "app"                              # Name of the job
-deploy_job_output_path: "/tmp/localhost"                # Must be set in the playbook or inventory
-deploy_job_job_image: "http://quay.io/skupper/lanyard"  # Image to be used for the job
-deploy_job_restart_policy: "OnFailure"                  # Job Restart Policy
-deploy_job_dns_policy: "ClusterFirst"                   # Job DNS Policy
-deploy_job_job_command: ""                              # If the command is defined, run it in the container initialization
+deploy_job_namespace_name: default                              # Namespace where the job will be deployed
+deploy_job_job_name: "app"                                      # Name of the job
+deploy_job_output_path: "/tmp/localhost"                        # Must be set in the playbook or inventory
+deploy_job_job_image: "http://{{skupper_test_image_lanyard}} "  # Image to be used for the job
+deploy_job_restart_policy: "OnFailure"                          # Job Restart Policy
+deploy_job_dns_policy: "ClusterFirst"                           # Job DNS Policy
+deploy_job_job_command: ""                                      # If the command is defined, run it in the container initialization

@@ -1,0 +1,7 @@
+---
+# defaults file for skupper_test_images
+
+skupper_test_image_hello_world_backend:  "{{ lookup( 'ansible.builtin.env', 'SKUPPER_TEST_IMAGE_HELLO_WORLD_BACKEND',  default='quay.io/skupper/hello-world-backend:latest') }}"
+skupper_test_image_hello_world_frontend: "{{ lookup( 'ansible.builtin.env', 'SKUPPER_TEST_IMAGE_HELLO_WORLD_FRONTEND', default='quay.io/skupper/hello-world-frontend:latest') }}"
+skupper_test_image_lanyard:              "{{ lookup( 'ansible.builtin.env', 'SKUPPER_TEST_IMAGE_LANYARD'             , default='quay.io/skupper/lanyard' )}}"
+skupper_test_image_curl:                 "{{ lookup( 'ansible.builtin.env', 'SKUPPER_TEST_IMAGE_CURL'                , default='quay.io/rzago/curl-telnet' )}}"
