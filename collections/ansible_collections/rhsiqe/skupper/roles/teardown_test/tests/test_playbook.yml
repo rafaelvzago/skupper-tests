@@ -1,6 +1,8 @@
 ---
 - name: Test deploy_workload role
   hosts: all
+  roles:
+  - rhsiqe.skupper.skupper_test_images
   tasks:
     - name: Calling the role to check the environment
       ansible.builtin.include_role:

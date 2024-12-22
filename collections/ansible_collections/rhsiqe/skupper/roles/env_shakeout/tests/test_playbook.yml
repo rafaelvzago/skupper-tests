@@ -1,6 +1,8 @@
 ---
 - name: Test playbook for the env_shakeout role
   hosts: all
+  roles:
+  - rhsiqe.skupper.skupper_test_images
   tasks:
     - name: Include the role to shakeout the environment
       ansible.builtin.include_role:

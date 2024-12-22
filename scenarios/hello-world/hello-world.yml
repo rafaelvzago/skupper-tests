@@ -1,6 +1,8 @@
 ---
 - name: Host Setup
   hosts: localhost
+  roles:
+  - rhsiqe.skupper.skupper_test_images
   tasks:
     - name: Host Setup
       ansible.builtin.include_role:
@@ -10,6 +12,8 @@
 
 - name: Hello World test playbook
   hosts: all
+  roles:
+  - rhsiqe.skupper.skupper_test_images
   tasks:
     - name: Setting the temporary directory path
       ansible.builtin.set_fact:
