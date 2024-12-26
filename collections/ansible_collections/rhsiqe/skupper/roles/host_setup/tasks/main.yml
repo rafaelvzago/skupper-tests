@@ -16,17 +16,17 @@
     url: "{{ host_setup_helm_script_url }}"
     dest: /tmp/get_helm.sh
     mode: '0700'
-  when: helm_install_with_package_manager is not defined or helm_install_with_package_manager.rc != 0
+  when: helm_install_with_package_manager is not defined or (helm_install_with_package_manager is defined and helm_install_with_package_manager.rc != 0)
 
 - name: Install Helm using script
   ansible.builtin.command: /tmp/get_helm.sh
   args:
     creates: /usr/local/bin/helm
-  when: helm_install_with_package_manager is not defined or helm_install_with_package_manager.rc != 0
+  when: helm_install_with_package_manager is not defined or (helm_install_with_package_manager is defined and helm_install_with_package_manager.rc != 0)
 
 - name: Remove get_helm.sh script
   ansible.builtin.file:
     path: /tmp/get_helm.sh
     state: absent
-  when: helm_install_with_package_manager is not defined or helm_install_with_package_manager.rc != 0
+  when: helm_install_with_package_manager is not defined or (helm_install_with_package_manager is defined and helm_install_with_package_manager.rc != 0)
 
