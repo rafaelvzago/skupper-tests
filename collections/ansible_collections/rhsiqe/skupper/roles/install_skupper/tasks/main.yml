@@ -4,11 +4,15 @@
   ansible.builtin.set_fact:
     skupper_folder: "{{ install_skupper_install_output_path }}/{{ inventory_hostname }}-skupper"
 
+- name: Skupper version to be installed
+  ansible.builtin.debug:
+    msg: "Skupper version: {{ install_skupper_version }}"
+
 - name: Clone Skupper repository
   ansible.builtin.git:
     repo: "{{ install_skupper_skupper_repository }}"
     dest: "{{ skupper_folder }}"
-    version: "{{ install_skupper_skupper_branch }}"
+    version: "{{ install_skupper_version }}"
     update: true
 
 - name: Install Skupper using Helm
