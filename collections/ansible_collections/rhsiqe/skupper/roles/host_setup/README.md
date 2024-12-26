@@ -7,6 +7,7 @@ This Ansible role installs `helm` on target hosts to prepare them for managing K
 - **Install Helm:**
   - Installs the `helm` package using the default package manager of the target host.
   - Ensures that `helm` is present and updated.
+  - Installs the package using the script when the package is not available in the default package manager.
 
 ## Requirements
 
