@@ -2,7 +2,7 @@
 # tasks file for collections/ansible_collections/rhsiqe/skupper/roles/host_setup
 - name: Install helm with package manager
   ansible.builtin.package:
-    name: helmassas
+    name: helm
     state: present
   register: helm_install_with_package_manager
   ignore_errors: true
