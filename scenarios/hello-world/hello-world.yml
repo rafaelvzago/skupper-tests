@@ -1,6 +1,7 @@
 ---
 - name: Host Setup
   hosts: localhost
+  become: true
   roles:
   - rhsiqe.skupper.skupper_test_images
   tasks:
