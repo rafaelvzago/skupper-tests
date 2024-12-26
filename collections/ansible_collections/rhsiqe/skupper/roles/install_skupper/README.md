@@ -24,7 +24,7 @@ This Ansible role automates the installation of Skupper using its Helm chart, en
 | Variable                               | Default Value                             | Description                                                                 |
 |----------------------------------------|-------------------------------------------|-----------------------------------------------------------------------------|
 | `install_skupper_skupper_repository`  | `https://github.com/skupperproject/skupper.git` | URL of the Skupper repository.                                             |
-| `install_skupper_skupper_branch`      | `v2`                                      | Branch of the Skupper repository to clone.                                 |
+| `install_skupper_version`      | `v2`                                      | Branch of the Skupper repository to clone.                                  |
 | `install_skupper_skupper_release_name`| `skupper-setup`                           | Release name for Skupper.                                                  |
 | `install_skupper_install_output_path` | `/tmp/localhost`                          | Directory where the repository will be cloned temporarily.                 |
 | `skupper_namespace`                   | `default`                                 | Kubernetes namespace for Skupper installation.                             |
@@ -41,7 +41,7 @@ This Ansible role automates the installation of Skupper using its Helm chart, en
       ansible.builtin.include_role:
         name: rhsiqe.skupper.install_skupper
       vars:
-        install_skupper_skupper_branch: "v2"
+        install_skupper_version: "v2"
         install_skupper_install_output_path: "/tmp/skupper"
         skupper_namespace: "skupper-namespace"
 ```

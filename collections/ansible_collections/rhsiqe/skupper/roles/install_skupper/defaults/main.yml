@@ -1,5 +1,5 @@
 # roles/install_skupper/defaults/main.yml
 install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git' # Skupper repository
-install_skupper_skupper_branch: 'v2'                                                # Skupper branch
+install_skupper_version: 'v2'                                                # Skupper branch
 install_skupper_skupper_release_name: skupper-setup                                 # Skupper release name
 install_skupper_install_output_path: "/tmp/localhost"                               # Must be set in the playbook or inventory
