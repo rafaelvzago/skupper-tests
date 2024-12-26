@@ -17,31 +17,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Add Helm Repository
-      - name: Add Helm Signing Key
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-
-      - name: Install apt-transport-https
-        run: sudo apt-get install apt-transport-https --yes
-
-      - name: Add Helm Repository
-        run: |
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-
-      - name: Update apt-get
-        run: sudo apt-get update
-
       # Set up Python and Install Dependencies
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
+      # Running MAKEFILE to build the collection
       - name: Running MAKEFILE
         run: |
           make build
 
+      # Install Ansible and Dependencies and requirements.txt
       - name: Install Ansible and Dependencies and requirements.txt
         run: |
           python -m pip install --upgrade pip

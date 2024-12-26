@@ -1,6 +1,7 @@
 ---
 - name: Test playbook host setup
   hosts: all
+  become: true
   roles:
   - rhsiqe.skupper.skupper_test_images
   tasks:
