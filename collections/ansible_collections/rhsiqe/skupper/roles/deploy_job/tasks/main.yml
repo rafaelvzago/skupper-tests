@@ -21,7 +21,7 @@
             containers:
               - name: "{{ deploy_job_job_name }}"
                 image: "{{ deploy_job_job_image }}"
-                command: "{{ deploy_job_job_command.split() }}"
+                command: "{{ deploy_job_job_command }}"
             dnsPolicy: "{{ deploy_job_dns_policy }}"
             restartPolicy: "{{ deploy_job_restart_policy }}"
 
@@ -31,7 +31,7 @@
     kind: Pod
     namespace: "{{ namespace }}"
   register: job_pods
-  until: job_pods.resources | map(attribute='status.phase') | select('equalto', 'Succeeded') | list | length > 0
+  until: job_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length > 0
   retries: 30
   delay: 10
 
