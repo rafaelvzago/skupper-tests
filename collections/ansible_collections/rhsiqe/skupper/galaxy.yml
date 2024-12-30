@@ -1,6 +1,6 @@
 namespace: rhsiqe
 name: skupper
-version: 0.1.5
+version: 0.1.6
 readme: README.md
 authors:
   - Rafael Zago <rafaelvzago@gmail.com>
