@@ -12,6 +12,5 @@ collections:
   - name: kubernetes.core
     version: 3.2.0
 
-  - name: https://github.com/rafaelvzago/skupper-tests.git#collections/ansible_collections/rhsiqe/skupper
-    type: git
+  - name: rhsiqe.skupper
     version: 0.1.7

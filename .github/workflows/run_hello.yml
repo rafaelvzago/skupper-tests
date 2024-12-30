@@ -23,6 +23,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      # Running MAKEFILE to build the collection
+      - name: Running MAKEFILE
+        run: |
+          make build
+
       # Install Ansible and Dependencies and requirements.txt
       - name: Install Ansible and Dependencies and requirements.txt
         run: |
