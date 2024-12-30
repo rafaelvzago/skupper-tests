@@ -8,7 +8,7 @@
 - name: Install Helm using script
   ansible.builtin.command: /tmp/get_helm.sh
   args:
-    creates: /usr/local/bin/helm
+    creates: /bin/helm
 
 - name: Remove Helm installation script
   ansible.builtin.file:
@@ -16,5 +16,5 @@
     state: absent
 
 - name: Verify Helm installation
-  ansible.builtin.command: helm version
+  ansible.builtin.command: /bin/helm version
   register: helm_version_result
