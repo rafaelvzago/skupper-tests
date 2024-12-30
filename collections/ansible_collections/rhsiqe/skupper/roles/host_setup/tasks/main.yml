@@ -16,5 +16,5 @@
     state: absent
 
 - name: Verify Helm installation
-  ansible.builtin.command: helm version
+  ansible.builtin.command: /usr/local/bin/helm version
   register: helm_version_result
