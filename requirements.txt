@@ -20,6 +20,11 @@ jsonschema-specifications==2024.10.1
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
+mkdocs==1.6.1
+mkdocs-material==9.5.49 
+mkdocs-markdownextradata-plugin==0.2.6
+mkdocs-include-markdown-plugin==7.1.2
+mkdocs-git-revision-date-localized-plugin==1.3.0
 mypy-extensions==1.0.0
 packaging==24.2
 Parsley==1.3
@@ -41,3 +46,4 @@ yamllint==1.35.1
 zipp==3.21.0
 molecule==24.9.0
 kubernetes==31.0.0
+
