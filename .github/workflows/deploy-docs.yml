@@ -36,5 +36,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs  # This is where MkDocs outputs built files
+          publish_dir: site  # This is where MkDocs outputs built files
 
