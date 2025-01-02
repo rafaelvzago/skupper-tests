@@ -24,6 +24,8 @@
     replace: false
     values:
       scope: "{{ install_skupper_scope }}"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   ignore_errors: true
 
 - name: Validate Skupper controller pod status
@@ -41,7 +43,7 @@
     - skupper_pods_info.resources is defined
     - (skupper_pods_info.resources | selectattr('metadata.name', 'regex', 'skupper-controller') | list | length) > 0
     - (skupper_pods_info.resources | selectattr('metadata.name', 'regex', 'skupper-controller') | selectattr('status.phase', '==', 'Running') | list | length) > 0
-  failed_when: false  # This will prevent the task from failing if conditions are not met
+  failed_when: false 
 
 - name: Clean up Skupper repository directory
   ansible.builtin.file:

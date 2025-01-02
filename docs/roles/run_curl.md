@@ -1,4 +1,3 @@
-```markdown
 # Role: run_curl
 
 This Ansible role executes a `curl` command within a Kubernetes cluster using a specified container image. The `curl` request is run inside a pod created dynamically within a defined namespace. The role ensures retries for pod creation and log retrieval to handle transient issues.
@@ -79,4 +78,3 @@ namespace_name: west
 ## License
 
 Apache License 2.0
-```

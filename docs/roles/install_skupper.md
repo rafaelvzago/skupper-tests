@@ -8,6 +8,9 @@ This Ansible role automates the installation of Skupper using its Helm chart, en
   - Clones the specified Skupper repository and branch to a temporary directory.
 - **Install Skupper Using Helm:**
   - Deploys Skupper in the specified Kubernetes namespace using the Helm chart.
+  - There are two installation modes: `cluster` and `namespace`.
+    - `cluster`: Installs Skupper in the entire Kubernetes cluster.
+    - `namespace`: Installs Skupper in a specific namespace.
 - **Clean Up Temporary Directory:**
   - Removes the cloned repository to maintain a clean environment.
 
@@ -27,8 +30,8 @@ This Ansible role automates the installation of Skupper using its Helm chart, en
 | `install_skupper_version`      | `v2`                                      | Branch of the Skupper repository to clone.                                  |
 | `install_skupper_skupper_release_name`| `skupper-setup`                           | Release name for Skupper.                                                  |
 | `install_skupper_install_output_path` | `/tmp/localhost`                          | Directory where the repository will be cloned temporarily.                 |
+| `install_skupper_scope`               | `cluster`                                 | Scope of the Skupper installation (cluster or namespace).                  |
 | `skupper_namespace`                   | `default`                                 | Kubernetes namespace for Skupper installation.                             |
-| `kubeconfig`                          |                                           | Path to the kubeconfig file for cluster access. **Mandatory.**             |
 
 ## Example Usage
 
