@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Rafael Zago" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Run Curl - Skupper Tests Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Run Curl";
+        var mkdocs_page_input_path = "roles/run_curl.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Skupper Tests Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Roles</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../access_grant/">Access Grant</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../create_connector/">Create Connector</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../create_listener/">Create Listener</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../deploy_job/">Deploy Job</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../deploy_workload/">Deploy Workload</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../env_shakeout/">Environment Shakeout</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../expose_service/">Expose Service</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../generate_namespaces/">Generate Namespaces</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../host_setup/">Host Setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install_skupper/">Install Skupper</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../link_site/">Link Site</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Run Curl</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tasks">Tasks</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#role-variables">Role Variables</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#defaults-from-defaultsmainyml">Defaults (from defaults/main.yml)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#required-variables">Required Variables</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example-usage">Example Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#playbook">Playbook</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#inventory-host_vars">Inventory (host_vars)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#host_varseastyml">host_vars/east.yml</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#host_varswestyml">host_vars/west.yml</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../skupper_site/">Skupper Site</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../skupper_test_images/">Skupper Test Images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../teardown_test/">Teardown Test</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Scenarios</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../scenarios/hello_world/">Hello World</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Skupper Tests Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Roles</li>
+      <li class="breadcrumb-item active">Run Curl</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="role-run_curl">Role: run_curl</h1>
+<p>This Ansible role executes a <code>curl</code> command within a Kubernetes cluster using a specified container image. The <code>curl</code> request is run inside a pod created dynamically within a defined namespace. The role ensures retries for pod creation and log retrieval to handle transient issues.</p>
+<h2 id="tasks">Tasks</h2>
+<ul>
+<li><strong>Set Namespace:</strong></li>
+<li>Constructs the namespace name using a prefix and a base name provided via variables.</li>
+<li><strong>Run Curl Command:</strong></li>
+<li>Creates a Kubernetes pod to execute the <code>curl</code> command targeting a specified address.</li>
+<li><strong>Retrieve Logs:</strong></li>
+<li>Captures the logs from the pod to output the results of the <code>curl</code> command.</li>
+<li><strong>Debug Output:</strong></li>
+<li>Displays the <code>curl</code> output for verification and debugging.</li>
+</ul>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Ansible 2.1 or newer</li>
+<li><code>kubernetes.core</code> collection installed on the control node</li>
+<li>Kubernetes cluster accessible via <code>kubeconfig</code></li>
+</ul>
+<h2 id="role-variables">Role Variables</h2>
+<h3 id="defaults-from-defaultsmainyml">Defaults (from <code>defaults/main.yml</code>)</h3>
+<ul>
+<li><code>run_curl_namespace</code>: Default namespace for the pod. (Default: <code>default</code>)</li>
+<li><code>run_curl_address</code>: The target URL for the <code>curl</code> command. (Default: <code>http://example.com</code>)</li>
+<li><code>run_curl_image</code>: The container image used to execute the <code>curl</code> command. (Default: <code>quay.io/rzago/curl-telnet</code>)</li>
+<li><code>run_curl_retries</code>: Number of retry attempts for pod creation. (Default: <code>10</code>)</li>
+<li><code>run_curl_delay</code>: Delay in seconds between retries for pod creation. (Default: <code>10</code>)</li>
+</ul>
+<h3 id="required-variables">Required Variables</h3>
+<p>These must be defined in the playbook or inventory:</p>
+<ul>
+<li><code>namespace_prefix</code>: Prefix for constructing the namespace name.</li>
+<li><code>namespace_name</code>: Base name for constructing the namespace.</li>
+</ul>
+<h2 id="example-usage">Example Usage</h2>
+<h3 id="playbook">Playbook</h3>
+<pre><code class="language-yaml">- hosts: all
+  tasks:
+    - name: Run curl command in Kubernetes
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.run_curl
+      vars:
+        namespace_prefix: &quot;test&quot;
+        namespace_name: &quot;east&quot;
+        run_curl_address: &quot;http://my-service.namespace.svc.cluster.local&quot;
+</code></pre>
+<h3 id="inventory-host_vars">Inventory (host_vars)</h3>
+<h4 id="host_varseastyml"><code>host_vars/east.yml</code></h4>
+<pre><code class="language-yaml">kubeconfig: /path/to/east/kubeconfig
+namespace_name: east
+</code></pre>
+<h4 id="host_varswestyml"><code>host_vars/west.yml</code></h4>
+<pre><code class="language-yaml">kubeconfig: /path/to/west/kubeconfig
+namespace_name: west
+</code></pre>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The final namespace is constructed as <code>&lt;namespace_prefix&gt;-&lt;namespace_name&gt;</code> (e.g., <code>test-east</code>).</li>
+<li>The <code>run_curl_address</code> should be updated to target the desired service or endpoint in the cluster.</li>
+<li>The pod created is ephemeral, and its logs are used to capture the <code>curl</code> command output.</li>
+<li>This role uses the <code>kubernetes.core.k8s</code> and <code>kubernetes.core.k8s_log</code> modules, ensuring a declarative and robust approach for Kubernetes resource management.</li>
+</ul>
+<h2 id="license">License</h2>
+<p>Apache License 2.0</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../link_site/" class="btn btn-neutral float-left" title="Link Site"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../skupper_site/" class="btn btn-neutral float-right" title="Skupper Site">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../link_site/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../skupper_site/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

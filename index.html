@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Modular and scalable framework to manage Skupper environments with Ansible." /><meta name="author" content="Rafael Zago" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Skupper Tests Documentation</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> Skupper Tests Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-roles">Key Roles</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-deploy_workload">1. deploy_workload</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-env_shakeout">2. env_shakeout</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-generate_namespaces">3. generate_namespaces</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-install_skupper">4. install_skupper</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-skupper_site">5. skupper_site</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#6-create_connector">6. create_connector</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#7-expose_service">7. expose_service</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#8-access_grant">8. access_grant</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#9-create_listener">9. create_listener</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#10-link_site">10. link_site</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#11-install_skupper_controller">11. install_skupper_controller</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#12-teardown_test">12. teardown_test</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#13-run_curl">13. run_curl</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#folder-structure">Folder Structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#test-instructions">Test Instructions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#running-role-specific-tests">Running Role-Specific Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#running-all-tests">Running All Tests</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example">Example:</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage-instructions">Usage Instructions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installing-dependencies">Installing Dependencies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#running-example-scenarios">Running Example Scenarios</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#scenario-test-hello-world">Scenario test hello-world</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#running-the-hello-world-scenario">Running the hello-world scenario</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#debuging-when-needed-ensure-that-the-teardown-was-skipped">Debuging when needed (ensure that the teardown was skipped):</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#compatibility">Compatibility</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Roles</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/access_grant/">Access Grant</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/create_connector/">Create Connector</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/create_listener/">Create Listener</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/deploy_job/">Deploy Job</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/deploy_workload/">Deploy Workload</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/env_shakeout/">Environment Shakeout</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/expose_service/">Expose Service</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/generate_namespaces/">Generate Namespaces</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/host_setup/">Host Setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/install_skupper/">Install Skupper</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/link_site/">Link Site</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/run_curl/">Run Curl</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/skupper_site/">Skupper Site</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/skupper_test_images/">Skupper Test Images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="roles/teardown_test/">Teardown Test</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Scenarios</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="scenarios/hello_world/">Hello World</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">Skupper Tests Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="skupper-tests-ansible-project">Skupper Tests - Ansible Project</h1>
+<p><a href="https://www.apache.org/licenses/LICENSE-2.0"><img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" /></a><br />
+<a href="https://github.com/rafaelvzago/skupper-tests/tags"><img alt="Latest Release" src="https://img.shields.io/github/v/tag/rafaelvzago/skupper-tests" /></a></p>
+<h2 id="overview">Overview</h2>
+<p>This project provides a modular and scalable framework to test and manage Skupper environments using Ansible roles and scenarios. Each role targets a specific functionality in a Skupper-based architecture, offering flexibility, reliability, and adherence to Ansible best practices. The project includes detailed tests for every role to ensure a robust and maintainable solution.</p>
+<hr />
+<h2 id="key-roles">Key Roles</h2>
+<h3 id="1-deploy_workload"><strong>1. <code>deploy_workload</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Deploy backend and frontend workloads in specified namespaces.</li>
+<li><strong>Tests</strong>: Verifies successful deployment and readiness of workloads in Kubernetes.</li>
+</ul>
+<h3 id="2-env_shakeout"><strong>2. <code>env_shakeout</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Validates and prepares the Kubernetes environment for Skupper operations.</li>
+<li><strong>Tests</strong>: Confirms cluster connectivity and ensures dependencies are available.</li>
+</ul>
+<h3 id="3-generate_namespaces"><strong>3. <code>generate_namespaces</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Creates namespaces with specific naming conventions to segment workloads and services.</li>
+<li><strong>Tests</strong>: Validates namespace creation and ensures naming compliance.</li>
+</ul>
+<h3 id="4-install_skupper"><strong>4. <code>install_skupper</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Installs Skupper by applying CRDs and deploying its controller.</li>
+<li><strong>Tests</strong>: Verifies the successful application of CRDs and controller readiness.</li>
+</ul>
+<h3 id="5-skupper_site"><strong>5. <code>skupper_site</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Configures Skupper sites, including advanced settings like <code>linkAccess</code>.</li>
+<li><strong>Tests</strong>: Ensures manifests are applied correctly and that all pods are ready.</li>
+</ul>
+<h3 id="6-create_connector"><strong>6. <code>create_connector</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Creates and deploys connectors for application routing in Skupper.</li>
+<li><strong>Tests</strong>: Validates connector configuration and functionality.</li>
+</ul>
+<h3 id="7-expose_service"><strong>7. <code>expose_service</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Exposes services in Kubernetes namespaces for external access.</li>
+<li><strong>Tests</strong>: Confirms service exposure and connectivity.</li>
+</ul>
+<h3 id="8-access_grant"><strong>8. <code>access_grant</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Manages access credentials for Skupper endpoints.</li>
+<li><strong>Tests</strong>: Validates access token generation and usage.</li>
+</ul>
+<h3 id="9-create_listener"><strong>9. <code>create_listener</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Configures listeners for consuming services via Skupper.</li>
+<li><strong>Tests</strong>: Ensures listener setup and service consumption.</li>
+</ul>
+<h3 id="10-link_site"><strong>10. <code>link_site</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Establishes site links between Skupper instances.</li>
+<li><strong>Tests</strong>: Confirms successful link creation and connectivity.</li>
+</ul>
+<h3 id="11-install_skupper_controller"><strong>11. <code>install_skupper_controller</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Installs and configures the Skupper controller for advanced cluster settings.</li>
+<li><strong>Tests</strong>: Verifies controller setup and operational readiness.</li>
+</ul>
+<h3 id="12-teardown_test"><strong>12. <code>teardown_test</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Cleans up namespaces and removes Skupper-related resources after testing.</li>
+<li><strong>Tests</strong>: Ensures proper cleanup and verifies resource deletion.</li>
+</ul>
+<h3 id="13-run_curl"><strong>13. <code>run_curl</code></strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Runs a test to validate Skupper connectivity.</li>
+<li><strong>Tests</strong>: Validates Skupper connectivity and service availability.</li>
+</ul>
+<hr />
+<h2 id="folder-structure">Folder Structure</h2>
+<pre><code class="language-plaintext">skupper-tests/
+├── ansible.cfg                  # Ansible configuration file
+├── Makefile                     # Automates tasks like dependency installation
+├── .ansible-lint                # Configuration for linting
+├── .gitignore                   # Git ignore rules
+├── LICENSE                      # License file
+├── README.md                    # Documentation for the project
+├── requirements.txt             # Python dependencies
+├── run_all_tests.sh             # Script to execute all tests
+├── scenarios/                   # Example scenarios like hello-world
+│   └── hello-world/ 
+│       ├── hello-world.yml      # Playbook for hello-world scenario
+│       └── inventory/           # Inventory for hello-world scenario
+│           ├── hosts.yml
+│           ├── group_vars/      # Group variables for hello-world scenario
+│           └── host_vars/
+├── test_results/                # Logs for test runs
+└── collections/
+    ├── ansible_collections/
+    │   └── rhsiqe/
+    │       └── skupper/
+    │           ├── galaxy.yml   # Metadata for the collection
+    │           ├── README.md    # Documentation for the collection
+    │           └── roles/
+    │               ├── access_grant/
+    │               ├── create_listener/
+    │               ├── deploy_workload/
+    │               ├── env_shakeout/
+    │               ├── create_connector/
+    │               ├── expose_service/
+    │               ├── generate_namespaces/
+    │               ├── install_skupper/
+    │               ├── install_skupper_controller/
+    │               ├── link_site/
+    │               ├── run_curl_test/
+    │               ├── skupper_site/
+    │               └── teardown_test/
+    └── requirements.yml       # Collection dependencies
+</code></pre>
+<hr />
+<h2 id="test-instructions">Test Instructions</h2>
+<h3 id="running-role-specific-tests">Running Role-Specific Tests</h3>
+<p>Each role has its own test playbook, allowing independent testing. For example, to test the <code>access_grant</code> role:</p>
+<pre><code class="language-bash">ansible-playbook collections/ansible_collections/rhsiqe/skupper/roles/access_grant/tests/test_playbook.yml \
+  -i collections/ansible_collections/rhsiqe/skupper/roles/access_grant/tests/inventory/hosts.yml
+</code></pre>
+<p>The role tests will automatically invoke any dependent roles required to create the appropriate test scenario.</p>
+<hr />
+<h3 id="running-all-tests">Running All Tests</h3>
+<p>Use the <code>make tests</code> command to run all tests in a logical order. This ensures the dependencies between roles are respected, and the environment is set up and torn down cleanly. The test script automatically logs results for review.</p>
+<h4 id="example">Example:</h4>
+<pre><code class="language-bash">make tests
+</code></pre>
+<p>The <code>run_all_tests.sh</code> script executes the roles in the following order:
+1. <code>env_shakeout</code>
+2. <code>generate_namespaces</code>
+3. <code>deploy_workload</code>
+4. <code>install_skupper</code>
+5. <code>install_skupper_controller</code>
+6. <code>skupper_site</code>
+7. <code>create_connector</code>
+8. <code>create_listener</code>
+9. <code>access_grant</code>
+10. <code>link_site</code>
+11. <code>expose_service</code>
+12. <code>run_curl_test</code></p>
+<p>Test logs are stored in the <code>test_results/</code> directory with timestamps.</p>
+<hr />
+<h2 id="usage-instructions">Usage Instructions</h2>
+<h3 id="installing-dependencies">Installing Dependencies</h3>
+<ol>
+<li>Install Python and Ansible dependencies:
+   <code>bash
+   make build</code></li>
+<li>Run the test suite:
+   <code>bash
+   make tests</code></li>
+<li>Review test results in the <code>test_results/</code> directory.</li>
+</ol>
+<h3 id="running-example-scenarios">Running Example Scenarios</h3>
+<p>Navigate to a scenario directory and execute the playbook. For example, to run the <code>hello-world</code> scenario:</p>
+<pre><code class="language-bash">ansible-playbook -i scenarios/hello-world/inventory/hosts.yml scenarios/hello-world/hello-world.yml
+</code></pre>
+<hr />
+<h2 id="scenario-test-hello-world">Scenario test hello-world</h2>
+<p>This scenario deploys a simple frontend and backend application in separate namespaces. The frontend consumes the backend service via Skupper. And it uses all the roles in the collection. Use as guide to create your own scenarios.</p>
+<h3 id="running-the-hello-world-scenario">Running the hello-world scenario</h3>
+<ol>
+<li>
+<p>After build the roles and collections, run the hello-world scenario:
+   <code>bash
+   ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml</code></p>
+</li>
+<li>
+<p>Running skipping skupper installation:
+   <code>bash
+   ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml -e skip_skupper_install=true</code></p>
+</li>
+<li>Running skipping teardown:
+   <code>bash
+   ansible-playbook scenarios/hello-world/hello-world.yml -i scenarios/hello-world/inventory/hosts.yml -e skip_teardown=true</code></li>
+</ol>
+<h3 id="debuging-when-needed-ensure-that-the-teardown-was-skipped">Debuging when needed (ensure that the teardown was skipped):</h3>
+<ul>
+<li>The playbook creates a temporary folder under /tmp with the inventory name on it:</li>
+</ul>
+<pre><code class="language-bash">TASK [Set a unique temporary directory path per host] *********************************************************************************************************************************************************************************************
+task path: /home/rzago/Code/skupper-tests/scenarios/hello-world/hello-world.yml:4
+ok: [west] =&gt; {&quot;ansible_facts&quot;: {&quot;temp_dir_path&quot;: &quot;/tmp/ansible.west&quot;}, &quot;changed&quot;: false}
+ok: [east] =&gt; {&quot;ansible_facts&quot;: {&quot;temp_dir_path&quot;: &quot;/tmp/ansible.east&quot;}, &quot;changed&quot;: false}
+</code></pre>
+<p>Inside this folder you will find the logs and the inventory file used to run the playbook:</p>
+<pre><code class="language-bash">❯ ls -l /tmp/ansible.east
+total 8
+-rw-r--r--. 1 rzago rzago 143 Nov 24 16:41 connector-east.yml        # Connector file
+-rw-r--r--. 1 rzago rzago 113 Nov 24 16:41 skupper-site-east.yml     # Skupper site file
+❯ ls -l /tmp/ansible.west/
+total 16
+-rw-r--r--. 1 rzago rzago  132 Nov 24 16:41 access-grant-west.yml    # Access grant
+-rw-r--r--. 1 rzago rzago 1454 Nov 24 16:42 access-token-west.yml    # Access token file
+-rw-r--r--. 1 rzago rzago  134 Nov 24 16:41 consume-service-west.yml # Consume service file
+-rw-r--r--. 1 rzago rzago  141 Nov 24 16:41 skupper-site-west.yml    # Skupper site file
+</code></pre>
+<h2 id="compatibility">Compatibility</h2>
+<ul>
+<li><strong>Tested with</strong>: <code>ansible-lint &gt;= 24.2.0</code></li>
+<li><strong>Compatible with</strong>: <code>ansible-core</code></li>
+</ul>
+<hr />
+<h2 id="license">License</h2>
+<p>This project is licensed under the Apache License 2.0. See the <a href="https://www.apache.org/licenses/LICENSE-2.0">LICENSE</a> for details.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="roles/access_grant/" class="btn btn-neutral float-right" title="Access Grant">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="roles/access_grant/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-01-02 20:31:49.255563+00:00
+-->
