@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Rafael Zago" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Teardown Test - Skupper Tests Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Teardown Test";
+        var mkdocs_page_input_path = "roles/teardown_test.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Skupper Tests Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Roles</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../access_grant/">Access Grant</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../create_connector/">Create Connector</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../create_listener/">Create Listener</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../deploy_job/">Deploy Job</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../deploy_workload/">Deploy Workload</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../env_shakeout/">Environment Shakeout</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../expose_service/">Expose Service</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../generate_namespaces/">Generate Namespaces</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../host_setup/">Host Setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install_skupper/">Install Skupper</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../link_site/">Link Site</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../run_curl/">Run Curl</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../skupper_site/">Skupper Site</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../skupper_test_images/">Skupper Test Images</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Teardown Test</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tasks">Tasks</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#role-variables">Role Variables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example-usage">Example Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#playbook">Playbook</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#inventory-host_vars">Inventory (host_vars)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#localhostyml">localhost.yml</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Scenarios</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../scenarios/hello_world/">Hello World</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Skupper Tests Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Roles</li>
+      <li class="breadcrumb-item active">Teardown Test</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="role-teardown_test">Role: teardown_test</h1>
+<p>The <code>teardown_test</code> Ansible role removes test environments created during Skupper testing. It deletes the specified namespace, waits for its successful removal, and cleans up temporary directories.</p>
+<h2 id="tasks">Tasks</h2>
+<ul>
+<li><strong>Delete Test Namespace:</strong></li>
+<li>Deletes the specified Kubernetes namespace using the <code>kubernetes.core.k8s</code> module.</li>
+<li><strong>Wait for Namespace Deletion:</strong></li>
+<li>Ensures the namespace is completely removed by checking its absence.</li>
+<li><strong>Delete Temporary Directories:</strong></li>
+<li>Removes any temporary directories specified for the test environment.</li>
+<li><strong>Display Cleanup Summary:</strong></li>
+<li>Outputs a summary of the deleted resources for verification.</li>
+</ul>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Ansible 2.1 or newer</li>
+<li><code>kubernetes.core</code> collection installed on the control node</li>
+<li>Kubernetes cluster accessible via <code>kubeconfig</code></li>
+</ul>
+<h2 id="role-variables">Role Variables</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>namespace_prefix</code></td>
+<td></td>
+<td>Prefix for the namespace to be deleted.</td>
+</tr>
+<tr>
+<td><code>namespace_name</code></td>
+<td></td>
+<td>Name of the namespace to be deleted.</td>
+</tr>
+<tr>
+<td><code>kubeconfig</code></td>
+<td></td>
+<td>Path to the kubeconfig file for accessing the Kubernetes cluster.</td>
+</tr>
+<tr>
+<td><code>teardown_test_temp_dir_path</code></td>
+<td></td>
+<td>Path to the temporary directory to be deleted.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example-usage">Example Usage</h2>
+<h3 id="playbook">Playbook</h3>
+<pre><code class="language-yaml">- hosts: all
+  tasks:
+    - name: Teardown test environment
+      ansible.builtin.include_role:
+        name: rhsiqe.skupper.teardown_test
+      vars:
+        namespace_prefix: &quot;skupper&quot;
+        namespace_name: &quot;test&quot;
+        teardown_test_temp_dir_path: &quot;/tmp/skupper-test&quot;
+</code></pre>
+<h3 id="inventory-host_vars">Inventory (host_vars)</h3>
+<h4 id="localhostyml"><code>localhost.yml</code></h4>
+<pre><code class="language-yaml">kubeconfig: /path/to/kubeconfig
+namespace_prefix: &quot;skupper&quot;
+namespace_name: &quot;test&quot;
+teardown_test_temp_dir_path: &quot;/tmp/skupper-test&quot;
+</code></pre>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The namespace is derived as <code>&lt;namespace_prefix&gt;-&lt;namespace_name&gt;</code>.</li>
+<li>The role ensures all resources are cleaned up, including temporary directories used during tests.</li>
+<li>Ensure the <code>kubernetes.core.k8s</code> module is installed to use this role.</li>
+<li>Namespace deletion may take some time; the role retries the check for up to 20 attempts with a 2-second delay between each.</li>
+</ul>
+<h2 id="license">License</h2>
+<p>This project is licensed under the Apache License, Version 2.0. See <a href="https://www.apache.org/licenses/LICENSE-2.0">LICENSE</a> for details.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../skupper_test_images/" class="btn btn-neutral float-left" title="Skupper Test Images"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../scenarios/hello_world/" class="btn btn-neutral float-right" title="Hello World">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../skupper_test_images/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../scenarios/hello_world/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
