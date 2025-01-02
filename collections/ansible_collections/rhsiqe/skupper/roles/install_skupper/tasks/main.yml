@@ -22,10 +22,9 @@
     namespace: "{{ install_skupper_namespace | default('default') }}"
     wait: true
     replace: false
+    kubeconfig: "{{ kubeconfig }}"
     values:
       scope: "{{ install_skupper_scope }}"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   ignore_errors: true
 
 - name: Validate Skupper controller pod status
