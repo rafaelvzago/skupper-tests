@@ -19,11 +19,11 @@
   kubernetes.core.helm:
     chart_ref: "{{ skupper_folder }}/charts/skupper-setup"
     name: "{{ install_skupper_skupper_release_name }}"
-    namespace: "{{ skupper_namespace | default('default') }}"
+    namespace: "{{ install_skupper_namespace | default('default') }}"
     wait: true
     replace: false
     values:
-      scope: "cluster"
+      scope: "{{ install_skupper_scope }}"
   ignore_errors: true
 
 - name: Validate Skupper controller pod status
@@ -31,6 +31,7 @@
     api_version: v1
     kind: Pod
     namespace: skupper
+    namespace: "{{ install_skupper_namespace | default('skupper') }}"
     kubeconfig: "{{ kubeconfig }}"
   register: skupper_pods_info
   retries: 30

@@ -61,7 +61,7 @@
     kind: Pod
     namespace: "{{ namespace }}"
   register: workload_pods
-  until: workload_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == deploy_workload_replicas
+  until: workload_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') 
   retries: 30
   delay: 10
 
