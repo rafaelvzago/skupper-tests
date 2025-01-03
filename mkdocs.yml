@@ -1,10 +1,8 @@
 site_name: Skupper Tests Documentation
 site_description: Modular and scalable framework to manage Skupper environments with Ansible.
 site_author: Rafael Zago
-site_author_email: rafaelvzago@gmail.com
 theme:
   name: readthedocs
-  custom_dir: docs/theme
   user_color_mode_toggle: true
 plugins:
   - search
@@ -31,3 +29,4 @@ nav:
     - Teardown Test: roles/teardown_test.md
   - Scenarios:
       - Hello World: scenarios/hello_world.md
+
