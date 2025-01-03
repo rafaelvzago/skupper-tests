@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - zago
+      - main
   workflow_dispatch:
 
 jobs:
