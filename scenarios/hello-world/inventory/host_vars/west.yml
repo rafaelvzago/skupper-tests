@@ -7,10 +7,10 @@ namespace_name: hello-world-west
 
 # Installation configuration for Skupper
 install_skupper_skupper_repository: 'https://github.com/skupperproject/skupper.git'
-install_skupper_version: '2.0.0-preview-2'
+install_skupper_version: '2.0.0-rc1'
 install_skupper_skupper_release_name: skupper-setup
-install_skupper_scope: namespace
-install_skupper_namespace: "{{ namespace_prefix }}-{{ namespace_name }}"
+install_skupper_scope: cluster
+install_skupper_namespace: "skupper-operator"
 
 # Deployment configuration for workload
 deploy_workload_workload_image: "{{ skupper_test_image_hello_world_frontend }}"

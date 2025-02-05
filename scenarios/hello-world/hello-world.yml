@@ -43,6 +43,7 @@
         name: rhsiqe.skupper.install_skupper
       when:
         - not skip_skupper_install | default(false) | bool
+        - "'west' in inventory_hostname"
       vars:
         install_skupper_install_output_path: "{{ temp_dir_path }}"
 
