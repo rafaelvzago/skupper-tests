@@ -140,7 +140,10 @@
 <li><strong>Install Skupper Using Helm:</strong></li>
 <li>Deploys Skupper in the specified Kubernetes namespace using the Helm chart.</li>
 <li>There are two installation modes: <code>cluster</code> and <code>namespace</code>.<ul>
-<li><code>cluster</code>: Installs Skupper in the entire Kubernetes cluster.</li>
+<li><code>cluster</code>: Installs Skupper in the entire Kubernetes cluster.<ul>
+<li>The skupper controller namespace needs to be specified in the <code>skupper_namespace</code> variable.</li>
+</ul>
+</li>
 <li><code>namespace</code>: Installs Skupper in a specific namespace.</li>
 </ul>
 </li>
@@ -193,7 +196,7 @@
 <tr>
 <td><code>skupper_namespace</code></td>
 <td><code>default</code></td>
-<td>Kubernetes namespace for Skupper installation.</td>
+<td>Kubernetes namespace for Skupper installation. If <code>cluster</code>, specify the namespace where the Skupper controller will be deployed.</td>
 </tr>
 </tbody>
 </table>
@@ -225,6 +228,7 @@ skupper_namespace: &quot;west-namespace&quot;
 <li>The new Helm-based installation method simplifies the deployment and management of Skupper in Kubernetes clusters.</li>
 <li>Ensure the <code>kubernetes.core.helm</code> plugin is installed and properly configured on the control node.</li>
 <li>This role supports Helm version 3 and above, leveraging its capabilities for reliable Kubernetes deployments.</li>
+<li>The role will check the pods in the specified namespace to ensure that the Skupper controller is running successfully based on the labelSelector=app.kubernetes.io/part-of=skupper</li>
 </ul>
 <h2 id="license">License</h2>
 <p>This project is licensed under the Apache License, Version 2.0. See <a href="https://www.apache.org/licenses/LICENSE-2.0">LICENSE</a> for details.</p>
