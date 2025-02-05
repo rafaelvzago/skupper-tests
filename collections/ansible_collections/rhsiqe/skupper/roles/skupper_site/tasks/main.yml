@@ -35,9 +35,13 @@
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
     kind: Pod
-    namespace: "{{ skupper_site_namespace }}"
+    namespace: "{{ namespace }}"
+    label_selectors:
+      - app.kubernetes.io/part-of in (skupper, skupper-network-observer)
   register: skupper_pods
-  until: skupper_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == skupper_pods.resources | length
+  until: >
+    (skupper_pods.resources | length > 0) and
+    (skupper_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') | list | length == skupper_pods.resources | length)
   retries: 30
   delay: 10
 

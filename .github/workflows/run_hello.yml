@@ -22,6 +22,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          architecture: x64
 
       # Running MAKEFILE to build the collection
       - name: Running MAKEFILE
@@ -57,6 +58,8 @@ jobs:
 
       # Run Tests
       - name: Run Hello World Test
+        env:
+          ANSIBLE_PYTHON_INTERPRETER: python3
         run: |
           export KUBECONFIG=~/.kube/config
           make hello
@@ -64,7 +67,7 @@ jobs:
       # Archive Test Results
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: test_results/

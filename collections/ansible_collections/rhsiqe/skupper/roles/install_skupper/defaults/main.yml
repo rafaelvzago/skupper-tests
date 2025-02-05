@@ -4,4 +4,4 @@ install_skupper_version: 'v2'                                                   
 install_skupper_skupper_release_name: skupper-setup                                 # Skupper release name
 install_skupper_install_output_path: "/tmp/localhost"                               # Must be set in the playbook or inventory
 install_skupper_scope: cluster                                                      # Skupper scope or namespace
-install_skupper_namespace: ""                                                       # Skupper namespace 
+install_skupper_namespace: "skupper-operator"                                       # Skupper namespace 

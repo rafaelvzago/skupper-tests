@@ -10,6 +10,7 @@ This Ansible role automates the installation of Skupper using its Helm chart, en
   - Deploys Skupper in the specified Kubernetes namespace using the Helm chart.
   - There are two installation modes: `cluster` and `namespace`.
     - `cluster`: Installs Skupper in the entire Kubernetes cluster.
+        - The skupper controller namespace needs to be specified in the `skupper_namespace` variable.
     - `namespace`: Installs Skupper in a specific namespace.
 - **Clean Up Temporary Directory:**
   - Removes the cloned repository to maintain a clean environment.
@@ -31,7 +32,7 @@ This Ansible role automates the installation of Skupper using its Helm chart, en
 | `install_skupper_skupper_release_name`| `skupper-setup`                           | Release name for Skupper.                                                  |
 | `install_skupper_install_output_path` | `/tmp/localhost`                          | Directory where the repository will be cloned temporarily.                 |
 | `install_skupper_scope`               | `cluster`                                 | Scope of the Skupper installation (cluster or namespace).                  |
-| `skupper_namespace`                   | `default`                                 | Kubernetes namespace for Skupper installation.                             |
+| `skupper_namespace`                   | `default`                                 | Kubernetes namespace for Skupper installation. If `cluster`, specify the namespace where the Skupper controller will be deployed. |
 
 ## Example Usage
 
@@ -72,6 +73,7 @@ skupper_namespace: "west-namespace"
 - The new Helm-based installation method simplifies the deployment and management of Skupper in Kubernetes clusters.
 - Ensure the `kubernetes.core.helm` plugin is installed and properly configured on the control node.
 - This role supports Helm version 3 and above, leveraging its capabilities for reliable Kubernetes deployments.
+- The role will check the pods in the specified namespace to ensure that the Skupper controller is running successfully based on the labelSelector=app.kubernetes.io/part-of=skupper
 
 ## License
 
