@@ -60,8 +60,10 @@
     kubeconfig: "{{ kubeconfig }}"
     kind: Pod
     namespace: "{{ namespace }}"
+    label_selectors:
+      - app={{ deploy_workload_deployment_name }}
   register: workload_pods
-  until: workload_pods.resources | map(attribute='status.phase') | select('equalto', 'Running') 
+  until: workload_pods.resources | selectattr('status.phase', 'equalto', 'Running') | list | length == deploy_workload_replicas
   retries: 30
   delay: 10
 

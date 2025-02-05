@@ -10,6 +10,8 @@ This Ansible role automates the deployment of a workload in a Kubernetes cluster
   - Creates a Deployment resource with the specified replicas and container image.
 - **Wait for Deployment Readiness:**
   - Ensures the workload is running by verifying pod statuses.
+  - Based on the label app: <deploy_workload_deployment_name>
+  - Based on the number of replicas: <deploy_workload_replicas>
 - **Display Pod Information:**
   - Outputs the names of the running pods for the deployed workload.
 
