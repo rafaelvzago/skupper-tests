@@ -57,6 +57,8 @@ jobs:
 
       # Run Tests
       - name: Run Hello World Test
+        env:
+          ANSIBLE_PYTHON_INTERPRETER: /usr/bin/python3.11
         run: |
           export KUBECONFIG=~/.kube/config
           make hello
