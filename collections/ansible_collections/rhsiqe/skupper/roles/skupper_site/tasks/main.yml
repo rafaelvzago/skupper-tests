@@ -24,13 +24,6 @@
   ansible.builtin.debug:
     var: skupper_site_results
 
-- name: Wait for Skupper router pods to be ready
-  kubernetes.core.k8s_info:
-    kubeconfig: "{{ kubeconfig }}"
-    kind: Pod
-    namespace: "{{ skupper_site_namespace }}"
-  register: skupper_pods
-
 - name: Wait for all pods in the namespace to be in Running state
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
