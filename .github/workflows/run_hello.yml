@@ -58,7 +58,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          python3 -m make hello
+          make hello
 
       - name: Archive test results
         if: always()  # This ensures the step runs even if previous steps fail
