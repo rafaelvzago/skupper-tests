@@ -1,73 +1,80 @@
----
-name: Run Ansible Hello World Test
+name: Build and Test
 
 on:
   push:
-    branches:
-      - zago
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
 
 jobs:
-  test:
-    name: Run Ansible Tests with Minikube
+  build-and-test:
     runs-on: ubuntu-latest
-
+    
     steps:
-      # Checkout the repository
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # Set up Python and Install Dependencies
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          architecture: x64
+          architecture: 'x64'
 
-      # Running MAKEFILE to build the collection
-      - name: Running MAKEFILE
-        run: |
-          make build
-
-      # Install Ansible and Dependencies and requirements.txt
-      - name: Install Ansible and Dependencies and requirements.txt
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Install Minikube and Kubernetes CLI
-      - name: Install Minikube and Kubectl
+      - name: Install Minikube
         run: |
           curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
           sudo install minikube-linux-amd64 /usr/local/bin/minikube
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          sudo install kubectl /usr/local/bin/kubectl
+          rm minikube-linux-amd64
 
-      # Start Minikube
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          rm kubectl
+
       - name: Start Minikube
         run: |
-          mkdir $HOME/.kube && touch $HOME/.kube/config && chmod 600 $HOME/.kube/config
-          export CHANGE_MINIKUBE_NONE_USER=true
           minikube start --driver=docker
-          minikube tunnel &
+          minikube status
 
-      # Install Ansible Collection
-      - name: Install Collection from requirements.yml
+      - name: Start Minikube Tunnel
         run: |
-          ansible-galaxy collection install -r collections/requirements.yml
+          nohup minikube tunnel > tunnel.log 2>&1 &
+          sleep 10  # Give tunnel time to establish
 
-      # Run Tests
-      - name: Run Hello World Test
-        env:
-          ANSIBLE_PYTHON_INTERPRETER: python3
+      - name: Build Ansible Collection
+        run: make build
+
+      - name: Install Ansible Collections from requirements
         run: |
-          export KUBECONFIG=~/.kube/config
-          make hello
+          if [ -f collections/requirements.txt ]; then
+            ansible-galaxy collection install -r collections/requirements.txt
+          fi
 
-      # Archive Test Results
-      - name: Upload Test Results
-        if: always()
+      - name: Run Tests
+        run: |
+          python3 -m make hello
+
+      - name: Archive test results
+        if: always()  # This ensures the step runs even if previous steps fail
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: test_results/
+          path: |
+            scenarios/hello-world/hello-world.yml
+            scenarios/**/test-*.xml
+            scenarios/**/junit-*.xml
+            scenarios/**/report-*.html
+          retention-days: 14
 
+      - name: Stop Minikube
+        if: always()
+        run: |
+          pkill -f "minikube tunnel"
+          minikube stop
+          minikube delete
