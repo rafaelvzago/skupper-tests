@@ -4,7 +4,7 @@ name: Run Ansible Hello World Test
 on:
   push:
     branches:
-      - '**'
+      - zago
 
 jobs:
   test:
